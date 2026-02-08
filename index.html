@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Aquí sigo</title>
+<style>
+    body {
+        margin: 0;
+        background: #0b0b0b;
+        color: #e6e6e6;
+        font-family: 'Helvetica Neue', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        text-align: center;
+    }
+
+    .container {
+        max-width: 700px;
+        padding: 40px;
+        animation: fadeIn 3s ease;
+    }
+
+    h1 {
+        font-weight: 300;
+        margin-bottom: 30px;
+    }
+
+    p {
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        opacity: 0.9;
+    }
+
+    img {
+        width: 100%;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        opacity: 0.95;
+    }
+
+    footer {
+        margin-top: 50px;
+        font-size: 14px;
+        opacity: 0.6;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1 id="frase"></h1>
+
+    <div id="imagenes"></div>
+
+    <p id="mensaje"></p>
+
+    <footer>
+        Este dominio no tiene fecha de vencimiento.<br>
+        <span id="cierre"></span>
+    </footer>
+</div>
+
+<audio id="audio" autoplay loop></audio>
+
+<script>
+    const frases = [
+        "No todo lo importante se dice.",
+        "Hoy solo quería que supieras que aquí sigo.",
+        "Algunas cosas se sostienen estando.",
+        "Este lugar existe porque tú importas."
+    ];
+
+    const mensajes = [
+        "Acompañar no siempre es saber qué hacer. A veces es no irse.",
+        "No entraste a mi vida como un momento. Entraste como algo que se acomoda y ya no se va.",
+        "Estuve cuando no era fácil. Y sigo estando.",
+        "Hay personas que cambian el peso de la vida. Tú eres una de ellas."
+    ];
+
+    const cierres = [
+        "Aquí sigo.",
+        "Sin ruido.",
+        "Con calma.",
+        "Sin exigencias."
+    ];
+
+    const fotos = [
+        "fotos/foto1.jpg",
+        "fotos/foto2.jpg",
+        "fotos/foto3.jpg"
+    ];
+
+    const musica = [
+        "musica/song1.mp3",
+        "musica/song2.mp3",
+        "musica/song3.mp3"
+    ];
+
+    function random(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    document.getElementById("frase").innerText = random(frases);
+    document.getElementById("mensaje").innerText = random(mensajes);
+    document.getElementById("cierre").innerText = random(cierres);
+
+    // Fotos aleatorias (2)
+    const contenedorFotos = document.getElementById("imagenes");
+    fotos.sort(() => 0.5 - Math.random()).slice(0,2).forEach(foto => {
+        const img = document.createElement("img");
+        img.src = foto;
+        contenedorFotos.appendChild(img);
+    });
+
+    // Música
+    const audio = document.getElementById("audio");
+    audio.src = random(musica);
+    audio.volume = 0.3;
+</script>
+
+</body>
+</html>
