@@ -25,643 +25,689 @@
             background: #000000;
             color: var(--color5);
             min-height: 100vh;
-            line-height: 1.4;
+            line-height: 1.5;
             overflow-x: hidden;
             position: relative;
             -webkit-font-smoothing: antialiased;
             touch-action: manipulation;
         }
         
-        /* Ocultar todo inicialmente */
-        #content {
-            opacity: 0;
-            transition: opacity 1.5s ease;
-        }
-        
-        #content.visible {
-            opacity: 1;
-        }
-        
-        /* Contenedor principal - mobile-first */
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 20px 16px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        /* Mensaje central único */
-        .message-wrapper {
-            margin-bottom: 60vh;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .main-message {
-            font-size: 2.2rem;
-            font-weight: 300;
-            line-height: 1.3;
-            color: var(--color5);
-            text-align: center;
-            margin-bottom: 1.5rem;
-            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.7);
-            animation: messageAppear 2s ease-out forwards;
-            opacity: 0;
-        }
-        
-        .secondary-message {
-            font-size: 1.1rem;
-            font-weight: 300;
-            line-height: 1.6;
-            color: var(--color4);
-            text-align: center;
-            max-width: 500px;
-            margin: 0 auto;
-            animation: messageAppear 2s ease-out 0.3s forwards;
-            opacity: 0;
-        }
-        
-        @keyframes messageAppear {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Sección de fotos con parallax */
-        .photos-section {
-            position: relative;
-            margin: 40vh 0 30vh;
-            min-height: 100vh;
-        }
-        
-        .photo-container {
-            position: relative;
-            height: 70vh;
-            margin: 20vh 0;
-            perspective: 1000px;
-        }
-        
-        .parallax-photo {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90vw;
-            max-width: 500px;
-            height: 70vh;
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-            background: #000;
-            opacity: 0.9;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-        
-        .parallax-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        /* Efecto parallax suave */
-        .parallax-photo:nth-child(1) {
-            transform: translateX(-50%) translateY(calc(var(--scroll-1, 0) * 0.5px));
-            z-index: 3;
-        }
-        
-        .parallax-photo:nth-child(2) {
-            transform: translateX(-50%) translateY(calc(var(--scroll-2, 0) * 0.3px));
-            z-index: 2;
-            opacity: 0.8;
-        }
-        
-        .parallax-photo:nth-child(3) {
-            transform: translateX(-50%) translateY(calc(var(--scroll-3, 0) * 0.2px));
-            z-index: 1;
-            opacity: 0.7;
-        }
-        
-        /* Interacción de imágenes */
-        .parallax-photo.active {
-            opacity: 1;
-            z-index: 10;
-        }
-        
-        /* Pantalla completa para imágenes */
-        .fullscreen-overlay {
+        /* Pantalla de bienvenida - para activar audio */
+        #welcomeScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
+            background: #000;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .welcome-message {
+            max-width: 500px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(1, 138, 190, 0.3);
+            margin-bottom: 30px;
+        }
+        
+        .welcome-message h1 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            color: var(--color5);
+            line-height: 1.4;
+        }
+        
+        .welcome-message p {
+            font-size: 1.1rem;
+            color: var(--color4);
+            margin-bottom: 15px;
+        }
+        
+        .tap-to-begin {
+            background: var(--color3);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .tap-to-begin:active {
+            transform: scale(0.95);
+            background: var(--color2);
+        }
+        
+        /* Contenedor principal */
+        .main-container {
+            display: none;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px 15px;
+            animation: fadeIn 1s ease;
+        }
+        
+        /* Mensaje principal - Jerarquía clara */
+        .message-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(1, 138, 190, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        #mainMessage {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--color5);
+            line-height: 1.4;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        #secondaryMessage {
+            font-size: 1.2rem;
+            color: var(--color4);
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(151, 202, 219, 0.2);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+        
+        /* Galería móvil optimizada */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .photo-frame {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+            aspect-ratio: 1/1;
+            background: #111;
+            cursor: pointer;
+        }
+        
+        .photo-frame:active {
+            transform: scale(0.97);
+        }
+        
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        /* Fullscreen para imágenes */
+        .image-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            z-index: 2000;
             display: none;
             justify-content: center;
             align-items: center;
+            padding: 20px;
             animation: fadeIn 0.3s ease;
         }
         
-        .fullscreen-overlay.active {
-            display: flex;
-        }
-        
         .fullscreen-image {
-            max-width: 95%;
-            max-height: 90%;
+            max-width: 100%;
+            max-height: 90vh;
             object-fit: contain;
-            animation: zoomIn 0.4s ease;
+            border-radius: 10px;
         }
         
-        @keyframes zoomIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        .close-btn {
+        .close-fullscreen {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-        }
-        
-        /* Footer minimalista */
-        footer {
-            margin-top: 30vh;
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--color4);
-            opacity: 0.6;
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        /* Player de audio invisible */
-        .audio-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 999;
-            opacity: 0.3;
-            transition: opacity 0.3s ease;
-        }
-        
-        .audio-container:hover {
-            opacity: 1;
-        }
-        
-        .play-pause-btn {
             background: rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
-            width: 40px;
-            height: 40px;
+            border: none;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
+            font-size: 28px;
+            cursor: pointer;
+            z-index: 2001;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        
+        /* Controles de audio */
+        .audio-controls {
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.3s;
+        }
+        
+        .audio-button {
+            background: transparent;
+            border: 2px solid var(--color3);
+            color: var(--color3);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
             cursor: pointer;
-            backdrop-filter: blur(10px);
-            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
         }
         
-        /* Estado inicial - ocultar controles hasta interacción */
-        .audio-container {
-            display: none;
+        .audio-button:active {
+            transform: scale(0.95);
+            background: rgba(1, 138, 190, 0.1);
         }
         
-        .audio-container.ready {
-            display: block;
+        .song-info {
+            text-align: center;
+            color: var(--color4);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            opacity: 0.8;
         }
         
-        /* Responsive refinado */
+        /* Footer optimizado */
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 25px 0;
+            border-top: 1px solid rgba(1, 138, 190, 0.2);
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.6s;
+        }
+        
+        #closingText {
+            font-size: 1.1rem;
+            color: var(--color5);
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+        
+        #signature {
+            font-size: 1rem;
+            color: var(--color3);
+            font-style: italic;
+            opacity: 0.9;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 20px 12px;
+            .main-container {
+                padding: 15px 12px;
             }
             
-            .main-message {
-                font-size: 1.8rem;
-                line-height: 1.2;
-                margin-bottom: 1rem;
+            .message-container {
+                padding: 35px 20px;
+                margin-bottom: 25px;
             }
             
-            .secondary-message {
-                font-size: 1rem;
-                padding: 0 10px;
+            #mainMessage {
+                font-size: 1.7rem;
             }
             
-            .photo-container {
-                height: 60vh;
-                margin: 15vh 0;
+            #secondaryMessage {
+                font-size: 1.1rem;
+                margin-top: 20px;
+                padding-top: 20px;
             }
             
-            .parallax-photo {
-                width: 95vw;
-                height: 60vh;
+            .gallery {
+                gap: 12px;
+                margin: 25px 0;
             }
             
-            .audio-container {
-                bottom: 10px;
-                right: 10px;
+            .audio-button {
+                width: 56px;
+                height: 56px;
+                font-size: 22px;
+            }
+            
+            .welcome-message h1 {
+                font-size: 1.6rem;
             }
         }
         
         @media (max-width: 480px) {
-            .main-message {
+            .gallery {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .photo-frame {
+                aspect-ratio: 4/3;
+            }
+            
+            #mainMessage {
                 font-size: 1.5rem;
             }
             
-            .secondary-message {
-                font-size: 0.95rem;
+            .message-container {
+                padding: 30px 18px;
             }
             
-            .photo-container {
-                height: 50vh;
+            .welcome-message {
+                padding: 25px 20px;
             }
             
-            .parallax-photo {
-                height: 50vh;
+            .welcome-message h1 {
+                font-size: 1.4rem;
             }
         }
         
         /* iPhone notch/padding seguro */
         @supports (padding: max(0px)) {
-            .container {
-                padding-left: max(16px, env(safe-area-inset-left));
-                padding-right: max(16px, env(safe-area-inset-right));
+            .main-container {
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(30px, env(safe-area-inset-bottom));
+            }
+            
+            #welcomeScreen {
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
                 padding-bottom: max(20px, env(safe-area-inset-bottom));
             }
+        }
+        
+        /* Estados de audio */
+        .playing .play-icon {
+            display: none;
+        }
+        
+        .playing .pause-icon {
+            display: block;
+        }
+        
+        .play-icon {
+            display: block;
+        }
+        
+        .pause-icon {
+            display: none;
         }
     </style>
 </head>
 
 <body>
-    <!-- Contenedor principal (invisible inicialmente) -->
-    <div id="content" class="container">
-        <!-- Mensaje central único -->
-        <div class="message-wrapper">
-            <h1 id="mainMessage" class="main-message"></h1>
-            <p id="secondaryMessage" class="secondary-message"></p>
+    <!-- Pantalla de bienvenida para activar audio -->
+    <div id="welcomeScreen">
+        <div class="welcome-message">
+            <h1>Aquí sigo</h1>
+            <p>Toca para comenzar esta experiencia</p>
+            <p style="font-size: 0.95rem; color: var(--color4); opacity: 0.8;">
+                La música comenzará automáticamente con tu primer toque
+            </p>
+            <button class="tap-to-begin" onclick="beginExperience()">
+                Comenzar
+            </button>
         </div>
-        
-        <!-- Sección de fotos con parallax -->
-        <div id="photosSection" class="photos-section">
-            <div class="photo-container">
-                <!-- Las fotos se insertarán aquí con JS -->
-            </div>
-        </div>
-        
-        <!-- Footer -->
-        <footer>
-            Aquí sigo. Siempre.
-        </footer>
     </div>
     
-    <!-- Overlay para imágenes en pantalla completa -->
-    <div id="fullscreenOverlay" class="fullscreen-overlay">
-        <button class="close-btn" onclick="closeFullscreen()">×</button>
+    <!-- Fullscreen para imágenes -->
+    <div id="imageFullscreen" class="image-fullscreen">
+        <button class="close-fullscreen" onclick="closeFullscreen()">×</button>
         <img id="fullscreenImg" class="fullscreen-image" src="" alt="">
     </div>
     
-    <!-- Player de audio (invisible inicialmente) -->
-    <div id="audioContainer" class="audio-container">
-        <button id="playPauseBtn" class="play-pause-btn" onclick="togglePlayPause()">▶️</button>
+    <!-- Contenedor principal -->
+    <div id="mainContainer" class="main-container">
+        <!-- Mensaje principal unificado -->
+        <div class="message-container">
+            <h1 id="mainMessage"></h1>
+            <p id="secondaryMessage"></p>
+        </div>
+        
+        <!-- Galería de imágenes -->
+        <div id="imagenes" class="gallery"></div>
+        
+        <!-- Controles de audio -->
+        <div class="audio-controls">
+            <button id="audioButton" class="audio-button" onclick="toggleAudio()">
+                <span class="play-icon">▶️</span>
+                <span class="pause-icon">⏸️</span>
+            </button>
+        </div>
+        <div class="song-info" id="songInfo"></div>
+        
+        <!-- Footer -->
+        <footer>
+            <div id="closingText">Este espacio permanecerá aquí, siempre.</div>
+            <div id="signature"></div>
+        </footer>
     </div>
     
-    <!-- Elemento de audio -->
-    <audio id="backgroundAudio" preload="auto" loop>
-        <!-- La fuente se establecerá con JS -->
+    <!-- Elemento de audio oculto -->
+    <audio id="backgroundMusic" loop>
+        <!-- La fuente se establecerá dinámicamente -->
     </audio>
 
     <script>
-        // Configuración inicial
-        const messages = [
+        // Datos que cambian cada vez que se recarga la página
+        const mensajesCompletos = [
             {
-                main: "Aquí sigo, como siempre, contigo.",
-                secondary: "En el silencio que acompaña, en la calma que permanece."
+                principal: "Aquí sigo",
+                secundario: "Hoy solo quería que supieras que estoy aquí. No como algo ruidoso, sino como algo que permanece."
             },
             {
-                main: "No todo necesita palabras.",
-                secondary: "A veces, solo estar es el mensaje más claro."
+                principal: "No todo lo importante se dice",
+                secundario: "A veces las palabras sobran cuando la presencia habla por sí sola."
             },
             {
-                main: "Presente sin exigir atención.",
-                secondary: "Como el fondo que sostiene, sin necesidad de protagonismo."
+                principal: "Simplemente aquí",
+                secundario: "Sin exigencias, sin ruido. Solo la certeza de que algunas cosas no necesitan explicación."
             },
             {
-                main: "Contigo, siempre.",
-                secondary: "En la distancia que no separa, en el tiempo que no olvida."
+                principal: "Contigo",
+                secundario: "En el silencio, en la calma, en lo que no se nombra pero se siente."
             },
             {
-                main: "Aquí.",
-                secondary: "Simple, quieto, permanente."
+                principal: "Presente",
+                secundario: "Estuve cuando no era fácil. Y sigo estando. Porque algunas personas cambian el peso de la vida."
+            },
+            {
+                principal: "Algunas cosas se sostienen estando",
+                secundario: "No entraste como un momento. Entraste como algo que se acomoda y ya no se va."
             }
         ];
 
-        // Lista de archivos de música local (en carpeta 'musica/')
-        const musicFiles = [
-            'musica/musica1.mp3',
-            'musica/musica2.mp3',
-            'musica/musica3.mp3',
-            'musica/musica4.mp3'
+        const firmas = [
+            "Aquí sigo.",
+            "Sin ruido, con calma.",
+            "Presente.",
+            "Contigo.",
+            "Simplemente aquí.",
+            "Aquí permanezco."
         ];
 
         // Generar array de 96 fotos
         const fotos = Array.from({length: 96}, (_, i) => `fotos/foto${i + 1}.jpg`);
         
-        // Variables de estado
-        let audioStarted = false;
-        let audioFadingIn = false;
-        let currentPhotoIndex = 0;
-        let selectedMessages = {};
-        let selectedMusic = '';
-        let selectedPhotos = [];
-        
-        // Función para seleccionar elementos únicos
+        // Música local - archivos en carpeta "musica"
+        const canciones = [
+            { archivo: "musica/musica1.mp3", nombre: "Canción 1" },
+            { archivo: "musica/musica2.mp3", nombre: "Canción 2" },
+            { archivo: "musica/musica3.mp3", nombre: "Canción 3" },
+            { archivo: "musica/musica4.mp3", nombre: "Canción 4" },
+            { archivo: "musica/musica5.mp3", nombre: "Canción 5" }
+        ];
+
+        // Variables globales
+        let audioIniciado = false;
+        let musicaActual = null;
+        let interaccionUsuario = false;
+
+        // Función para obtener un elemento aleatorio
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // Función para seleccionar elementos aleatorios sin repetición
         function selectUniqueRandom(arr, count) {
             const shuffled = [...arr].sort(() => Math.random() - 0.5);
             return shuffled.slice(0, count);
         }
-        
-        // Función para seleccionar un mensaje único
-        function selectUniqueMessage() {
-            const usedMessages = JSON.parse(localStorage.getItem('usedMessages') || '[]');
-            let availableMessages = messages.filter(msg => !usedMessages.includes(msg.main));
+
+        // Inicializar contenido
+        function initContenido() {
+            // Seleccionar mensaje aleatorio
+            const mensaje = getRandomElement(mensajesCompletos);
+            document.getElementById("mainMessage").textContent = mensaje.principal;
+            document.getElementById("secondaryMessage").textContent = mensaje.secundario;
             
-            // Si ya usamos todos los mensajes, reiniciamos
-            if (availableMessages.length === 0) {
-                availableMessages = messages;
-                localStorage.setItem('usedMessages', '[]');
-            }
-            
-            const selected = availableMessages[Math.floor(Math.random() * availableMessages.length)];
-            
-            // Guardar este mensaje como usado
-            usedMessages.push(selected.main);
-            localStorage.setItem('usedMessages', JSON.stringify(usedMessages.slice(-10))); // Guardar solo los últimos 10
-            
-            return selected;
-        }
-        
-        // Inicializar selecciones (se ejecuta inmediatamente)
-        function initSelections() {
-            // Seleccionar mensaje único
-            selectedMessages = selectUniqueMessage();
+            // Seleccionar firma aleatoria
+            document.getElementById("signature").textContent = getRandomElement(firmas);
             
             // Seleccionar música aleatoria
-            selectedMusic = musicFiles[Math.floor(Math.random() * musicFiles.length)];
+            musicaActual = getRandomElement(canciones);
+            const audioElement = document.getElementById("backgroundMusic");
+            audioElement.src = musicaActual.archivo;
             
-            // Seleccionar 3 fotos únicas para parallax
-            selectedPhotos = selectUniqueRandom(fotos, 3);
+            // Actualizar info de la canción
+            document.getElementById("songInfo").textContent = `🎵 ${musicaActual.nombre}`;
             
-            console.log('Selecciones inicializadas:', {
-                mensaje: selectedMessages.main,
-                musica: selectedMusic,
-                fotos: selectedPhotos.length
+            // Configurar galería
+            setupGaleria();
+            
+            console.log("Contenido inicializado con:", {
+                mensaje: mensaje.principal,
+                cancion: musicaActual.nombre
             });
         }
-        
-        // Establecer mensajes antes de mostrar el DOM
-        function setMessages() {
-            document.getElementById('mainMessage').textContent = selectedMessages.main;
-            document.getElementById('secondaryMessage').textContent = selectedMessages.secondary;
-        }
-        
-        // Configurar fotos con parallax
-        function setupPhotos() {
-            const photoContainer = document.querySelector('.photo-container');
-            photoContainer.innerHTML = '';
+
+        // Configurar galería de imágenes
+        function setupGaleria() {
+            const galleryContainer = document.getElementById('imagenes');
+            galleryContainer.innerHTML = '';
             
-            selectedPhotos.forEach((photoSrc, index) => {
-                const photoDiv = document.createElement('div');
-                photoDiv.className = 'parallax-photo';
-                photoDiv.style.setProperty('--scroll-' + (index + 1), '0');
+            // Seleccionar 4 imágenes aleatorias para la galería
+            const galleryImages = selectUniqueRandom(fotos, 4);
+            
+            galleryImages.forEach((imgSrc, index) => {
+                const frame = document.createElement('div');
+                frame.className = 'photo-frame';
+                frame.onclick = () => openFullscreen(imgSrc);
                 
                 const img = document.createElement('img');
-                img.src = photoSrc;
-                img.alt = '';
-                img.loading = 'lazy';
-                
-                // Manejo de error silencioso
+                img.src = imgSrc;
+                img.alt = `Imagen ${index + 1}`;
+                img.loading = "lazy";
                 img.onerror = function() {
-                    this.style.display = 'none';
+                    // Si la imagen no carga, simplemente ocultamos el frame
+                    this.parentElement.style.display = 'none';
                 };
                 
-                // Hacer clic para pantalla completa
-                img.addEventListener('click', () => openFullscreen(photoSrc));
-                
-                photoDiv.appendChild(img);
-                photoContainer.appendChild(photoDiv);
+                frame.appendChild(img);
+                galleryContainer.appendChild(frame);
             });
         }
-        
-        // Configurar audio con fade in
-        function setupAudio() {
-            const audio = document.getElementById('backgroundAudio');
+
+        // Función para comenzar la experiencia
+        function beginExperience() {
+            interaccionUsuario = true;
             
-            // Configurar fuente de audio
-            audio.src = selectedMusic;
-            audio.volume = 0;
+            // Ocultar pantalla de bienvenida
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            welcomeScreen.style.animation = 'fadeOut 0.5s ease forwards';
             
-            // Configurar controles de audio
-            const playPauseBtn = document.getElementById('playPauseBtn');
-            
-            audio.addEventListener('play', () => {
-                playPauseBtn.textContent = '⏸️';
-            });
-            
-            audio.addEventListener('pause', () => {
-                playPauseBtn.textContent = '▶️';
-            });
-            
-            // Fade in gradual de la música
-            function fadeInAudio() {
-                if (audioFadingIn) return;
-                
-                audioFadingIn = true;
-                audio.play().then(() => {
-                    let volume = 0;
-                    const fadeInterval = setInterval(() => {
-                        volume += 0.02;
-                        if (volume >= 0.7) {
-                            volume = 0.7;
-                            clearInterval(fadeInterval);
-                            audioFadingIn = false;
-                        }
-                        audio.volume = volume;
-                    }, 100);
-                }).catch(error => {
-                    console.log('Error al reproducir audio:', error);
-                    audioFadingIn = false;
-                });
-            }
-            
-            // Mostrar controles de audio
-            document.getElementById('audioContainer').classList.add('ready');
-            
-            return fadeInAudio;
-        }
-        
-        // Función para iniciar música en primer toque
-        function initAudioOnFirstInteraction() {
-            let interacted = false;
-            
-            const startAudio = () => {
-                if (!interacted) {
-                    interacted = true;
-                    
-                    // Quitar todos los event listeners
-                    ['click', 'touchstart', 'scroll'].forEach(event => {
-                        document.removeEventListener(event, startAudio);
-                    });
-                    
-                    // Iniciar audio con fade in
-                    if (window.fadeInAudio) {
-                        window.fadeInAudio();
-                    }
-                }
-            };
-            
-            // Escuchar múltiples tipos de interacción
-            ['click', 'touchstart', 'scroll'].forEach(event => {
-                document.addEventListener(event, startAudio, { once: true });
-            });
-            
-            // También intentar después de 3 segundos de inactividad
             setTimeout(() => {
-                if (!interacted) {
-                    document.body.click(); // Simular interacción
-                }
-            }, 3000);
+                welcomeScreen.style.display = 'none';
+                document.getElementById('mainContainer').style.display = 'block';
+                
+                // Iniciar música
+                iniciarMusica();
+            }, 500);
         }
-        
-        // Función para pantalla completa de imágenes
+
+        // Iniciar música (solo después de interacción del usuario)
+        function iniciarMusica() {
+            if (audioIniciado) return;
+            
+            const audioElement = document.getElementById('backgroundMusic');
+            
+            // Intentar reproducir
+            audioElement.play().then(() => {
+                console.log("Música iniciada automáticamente");
+                audioIniciado = true;
+                document.getElementById('audioButton').classList.add('playing');
+            }).catch(error => {
+                console.log("Error al iniciar música automáticamente:", error);
+                // Mostrar mensaje para que el usuario toque el botón
+                document.getElementById('songInfo').innerHTML = 
+                    '🎵 Toca el botón para iniciar la música';
+            });
+        }
+
+        // Alternar reproducción de audio
+        function toggleAudio() {
+            const audioElement = document.getElementById('backgroundMusic');
+            const audioButton = document.getElementById('audioButton');
+            
+            if (audioElement.paused) {
+                audioElement.play();
+                audioButton.classList.add('playing');
+                console.log("Música reanudada");
+            } else {
+                audioElement.pause();
+                audioButton.classList.remove('playing');
+                console.log("Música pausada");
+            }
+        }
+
+        // Función para abrir imagen en fullscreen
         function openFullscreen(imgSrc) {
-            const overlay = document.getElementById('fullscreenOverlay');
+            const fullscreen = document.getElementById('imageFullscreen');
             const fullscreenImg = document.getElementById('fullscreenImg');
             
             fullscreenImg.src = imgSrc;
-            overlay.classList.add('active');
+            fullscreen.style.display = 'flex';
+            
+            // Bloquear scroll del body
             document.body.style.overflow = 'hidden';
         }
-        
+
+        // Función para cerrar fullscreen
         function closeFullscreen() {
-            const overlay = document.getElementById('fullscreenOverlay');
-            overlay.classList.remove('active');
+            const fullscreen = document.getElementById('imageFullscreen');
+            fullscreen.style.display = 'none';
+            
+            // Restaurar scroll del body
             document.body.style.overflow = 'auto';
         }
-        
-        // Efecto parallax en scroll
-        function setupParallax() {
-            const photos = document.querySelectorAll('.parallax-photo');
+
+        // Configurar interacción para iniciar experiencia
+        function setupInteraccion() {
+            // Capturar cualquier interacción del usuario
+            const eventos = ['click', 'touchstart', 'scroll', 'keydown'];
             
-            function updateParallax() {
-                const scrollY = window.scrollY;
-                const windowHeight = window.innerHeight;
-                
-                photos.forEach((photo, index) => {
-                    const rect = photo.getBoundingClientRect();
-                    const photoCenter = rect.top + rect.height / 2;
-                    const distanceFromCenter = (windowHeight / 2 - photoCenter) / windowHeight;
+            const iniciarConInteraccion = () => {
+                if (!interaccionUsuario) {
+                    interaccionUsuario = true;
+                    beginExperience();
                     
-                    // Efecto parallax suave
-                    const parallaxValue = distanceFromCenter * 100;
-                    photo.style.setProperty('--scroll-' + (index + 1), parallaxValue.toString());
-                });
-            }
+                    // Remover listeners después de la primera interacción
+                    eventos.forEach(evento => {
+                        document.removeEventListener(evento, iniciarConInteraccion);
+                    });
+                }
+            };
             
-            // Actualizar en scroll
-            window.addEventListener('scroll', updateParallax, { passive: true });
+            // Agregar listeners para todos los eventos de interacción
+            eventos.forEach(evento => {
+                document.addEventListener(evento, iniciarConInteraccion, { once: false });
+            });
             
-            // Actualizar inicialmente
-            updateParallax();
+            // También permitir iniciar con el botón de bienvenida
+            document.getElementById('welcomeScreen').addEventListener('click', (e) => {
+                if (e.target.classList.contains('tap-to-begin') || 
+                    e.target.closest('.tap-to-begin')) {
+                    return; // El botón ya tiene su propio handler
+                }
+                iniciarConInteraccion();
+            });
         }
-        
-        // Toggle play/pause
-        function togglePlayPause() {
-            const audio = document.getElementById('backgroundAudio');
-            if (audio.paused) {
-                audio.play();
-            } else {
-                audio.pause();
-            }
-        }
-        
+
+        // Inicializar cuando la página cargue
+        window.addEventListener('load', () => {
+            initContenido();
+            setupInteraccion();
+            
+            // Configurar audio para que se reinicie si hay error
+            const audioElement = document.getElementById('backgroundMusic');
+            audioElement.addEventListener('error', (e) => {
+                console.error("Error cargando audio:", e);
+                document.getElementById('songInfo').innerHTML = 
+                    '🎵 La música no está disponible en este momento';
+            });
+            
+            // Actualizar estado del botón cuando la música termina/pausa
+            audioElement.addEventListener('pause', () => {
+                document.getElementById('audioButton').classList.remove('playing');
+            });
+            
+            audioElement.addEventListener('play', () => {
+                document.getElementById('audioButton').classList.add('playing');
+            });
+        });
+
         // Cerrar fullscreen con tecla ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeFullscreen();
             }
         });
-        
-        // Cerrar fullscreen tocando fuera
-        document.getElementById('fullscreenOverlay').addEventListener('click', (e) => {
-            if (e.target.id === 'fullscreenOverlay') {
+
+        // Cerrar fullscreen tocando fuera de la imagen
+        document.getElementById('imageFullscreen').addEventListener('click', (e) => {
+            if (e.target.id === 'imageFullscreen') {
                 closeFullscreen();
             }
         });
-        
-        // Inicialización completa
-        function initApp() {
-            // 1. Hacer selecciones iniciales
-            initSelections();
-            
-            // 2. Establecer mensajes (antes de mostrar el DOM)
-            setMessages();
-            
-            // 3. Configurar fotos
-            setupPhotos();
-            
-            // 4. Configurar audio y obtener función de fade in
-            window.fadeInAudio = setupAudio();
-            
-            // 5. Configurar parallax
-            setupParallax();
-            
-            // 6. Preparar para iniciar audio en primer toque
-            initAudioOnFirstInteraction();
-            
-            // 7. Mostrar contenido con fade in
-            setTimeout(() => {
-                document.getElementById('content').classList.add('visible');
-            }, 100);
-            
-            console.log('Aplicación inicializada');
-        }
-        
-        // Iniciar cuando el DOM esté listo
-        document.addEventListener('DOMContentLoaded', initApp);
-        
-        // Prevenir zoom no deseado en móvil
+
+        // Prevenir zoom no deseado en móviles
         document.addEventListener('touchstart', function(event) {
             if (event.touches.length > 1) {
                 event.preventDefault();
             }
         }, { passive: false });
-        
+
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function(event) {
             const now = Date.now();
