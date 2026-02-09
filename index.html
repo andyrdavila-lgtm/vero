@@ -32,8 +32,8 @@
             touch-action: manipulation;
         }
         
-        /* Pantalla de bienvenida - para activar audio */
-        #welcomeScreen {
+        /* Animación de imágenes a pantalla completa */
+        #fullscreenAnimation {
             position: fixed;
             top: 0;
             left: 0;
@@ -42,54 +42,51 @@
             background: #000;
             z-index: 3000;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            text-align: center;
-            animation: fadeIn 0.5s ease;
         }
         
-        .welcome-message {
-            max-width: 500px;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            border: 1px solid rgba(1, 138, 190, 0.3);
-            margin-bottom: 30px;
+        .animation-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            animation: imageSequence 12s ease-in-out infinite;
         }
         
-        .welcome-message h1 {
-            font-size: 1.8rem;
-            font-weight: 300;
-            margin-bottom: 20px;
-            color: var(--color5);
-            line-height: 1.4;
+        .animation-image:nth-child(1) {
+            animation-delay: 0s;
         }
         
-        .welcome-message p {
-            font-size: 1.1rem;
-            color: var(--color4);
-            margin-bottom: 15px;
+        .animation-image:nth-child(2) {
+            animation-delay: 4s;
         }
         
-        .tap-to-begin {
-            background: var(--color3);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
+        .animation-image:nth-child(3) {
+            animation-delay: 8s;
         }
         
-        .tap-to-begin:active {
-            transform: scale(0.95);
-            background: var(--color2);
+        @keyframes imageSequence {
+            0% {
+                opacity: 0;
+                transform: scale(1);
+            }
+            10% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            30% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            40% {
+                opacity: 0;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+            }
         }
         
         /* Contenedor principal */
@@ -101,38 +98,24 @@
             animation: fadeIn 1s ease;
         }
         
-        /* Mensaje principal - Jerarquía clara */
+        /* Mensaje único central */
         .message-container {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 40px 25px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(1, 138, 190, 0.2);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             text-align: center;
+            margin: 40px 0 30px;
+            padding: 0 15px;
         }
         
-        #mainMessage {
-            font-size: 2rem;
+        #unicoMensaje {
+            font-size: 2.2rem;
             font-weight: 300;
             color: var(--color5);
             line-height: 1.4;
             margin: 0;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7);
+            letter-spacing: -0.5px;
         }
         
-        #secondaryMessage {
-            font-size: 1.2rem;
-            color: var(--color4);
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid rgba(151, 202, 219, 0.2);
-            line-height: 1.6;
-            font-weight: 300;
-        }
-        
-        /* Galería móvil optimizada */
+        /* Galería móvil */
         .gallery {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -159,10 +142,9 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
         }
         
-        /* Fullscreen para imágenes */
+        /* Fullscreen para imágenes de galería */
         .image-fullscreen {
             position: fixed;
             top: 0;
@@ -204,63 +186,49 @@
         }
         
         /* Controles de audio */
-        .audio-controls {
-            margin: 25px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 0.3s;
+        .audio-section {
+            margin: 40px 0;
+            text-align: center;
         }
         
         .audio-button {
-            background: transparent;
-            border: 2px solid var(--color3);
-            color: var(--color3);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            font-size: 24px;
+            background: var(--color3);
+            color: white;
+            border: none;
+            padding: 18px 35px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
+            gap: 12px;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(1, 138, 190, 0.3);
         }
         
         .audio-button:active {
             transform: scale(0.95);
-            background: rgba(1, 138, 190, 0.1);
+            background: var(--color2);
         }
         
         .song-info {
-            text-align: center;
             color: var(--color4);
             font-size: 0.9rem;
-            margin-top: 10px;
+            margin-top: 15px;
             opacity: 0.8;
         }
         
-        /* Footer optimizado */
+        /* Footer */
         footer {
-            margin-top: 50px;
+            margin-top: 60px;
             text-align: center;
-            padding: 25px 0;
+            padding: 30px 0;
             border-top: 1px solid rgba(1, 138, 190, 0.2);
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 0.6s;
         }
         
-        #closingText {
+        #firma {
             font-size: 1.1rem;
-            color: var(--color5);
-            margin-bottom: 15px;
-            font-weight: 300;
-        }
-        
-        #signature {
-            font-size: 1rem;
             color: var(--color3);
             font-style: italic;
             opacity: 0.9;
@@ -270,17 +238,6 @@
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         
         @keyframes fadeOut {
@@ -294,19 +251,12 @@
                 padding: 15px 12px;
             }
             
+            #unicoMensaje {
+                font-size: 1.8rem;
+            }
+            
             .message-container {
-                padding: 35px 20px;
-                margin-bottom: 25px;
-            }
-            
-            #mainMessage {
-                font-size: 1.7rem;
-            }
-            
-            #secondaryMessage {
-                font-size: 1.1rem;
-                margin-top: 20px;
-                padding-top: 20px;
+                margin: 30px 0 25px;
             }
             
             .gallery {
@@ -315,13 +265,12 @@
             }
             
             .audio-button {
-                width: 56px;
-                height: 56px;
-                font-size: 22px;
+                padding: 16px 30px;
+                font-size: 1rem;
             }
             
-            .welcome-message h1 {
-                font-size: 1.6rem;
+            .audio-section {
+                margin: 35px 0;
             }
         }
         
@@ -335,20 +284,12 @@
                 aspect-ratio: 4/3;
             }
             
-            #mainMessage {
-                font-size: 1.5rem;
+            #unicoMensaje {
+                font-size: 1.6rem;
             }
             
             .message-container {
-                padding: 30px 18px;
-            }
-            
-            .welcome-message {
-                padding: 25px 20px;
-            }
-            
-            .welcome-message h1 {
-                font-size: 1.4rem;
+                margin: 25px 0 20px;
             }
         }
         
@@ -359,49 +300,17 @@
                 padding-right: max(15px, env(safe-area-inset-right));
                 padding-bottom: max(30px, env(safe-area-inset-bottom));
             }
-            
-            #welcomeScreen {
-                padding-left: max(20px, env(safe-area-inset-left));
-                padding-right: max(20px, env(safe-area-inset-right));
-                padding-bottom: max(20px, env(safe-area-inset-bottom));
-            }
-        }
-        
-        /* Estados de audio */
-        .playing .play-icon {
-            display: none;
-        }
-        
-        .playing .pause-icon {
-            display: block;
-        }
-        
-        .play-icon {
-            display: block;
-        }
-        
-        .pause-icon {
-            display: none;
         }
     </style>
 </head>
 
 <body>
-    <!-- Pantalla de bienvenida para activar audio -->
-    <div id="welcomeScreen">
-        <div class="welcome-message">
-            <h1>Aquí sigo</h1>
-            <p>Toca para comenzar esta experiencia</p>
-            <p style="font-size: 0.95rem; color: var(--color4); opacity: 0.8;">
-                La música comenzará automáticamente con tu primer toque
-            </p>
-            <button class="tap-to-begin" onclick="beginExperience()">
-                Comenzar
-            </button>
-        </div>
+    <!-- Animación de imágenes a pantalla completa -->
+    <div id="fullscreenAnimation">
+        <!-- Las imágenes se insertarán aquí -->
     </div>
     
-    <!-- Fullscreen para imágenes -->
+    <!-- Fullscreen para imágenes de galería -->
     <div id="imageFullscreen" class="image-fullscreen">
         <button class="close-fullscreen" onclick="closeFullscreen()">×</button>
         <img id="fullscreenImg" class="fullscreen-image" src="" alt="">
@@ -409,28 +318,26 @@
     
     <!-- Contenedor principal -->
     <div id="mainContainer" class="main-container">
-        <!-- Mensaje principal unificado -->
+        <!-- Mensaje único central -->
         <div class="message-container">
-            <h1 id="mainMessage"></h1>
-            <p id="secondaryMessage"></p>
+            <h1 id="unicoMensaje"></h1>
         </div>
         
         <!-- Galería de imágenes -->
         <div id="imagenes" class="gallery"></div>
         
-        <!-- Controles de audio -->
-        <div class="audio-controls">
+        <!-- Sección de audio -->
+        <div class="audio-section">
             <button id="audioButton" class="audio-button" onclick="toggleAudio()">
-                <span class="play-icon">▶️</span>
-                <span class="pause-icon">⏸️</span>
+                <span id="playIcon">▶️</span>
+                <span>Iniciar música</span>
             </button>
+            <div class="song-info" id="songInfo"></div>
         </div>
-        <div class="song-info" id="songInfo"></div>
         
         <!-- Footer -->
         <footer>
-            <div id="closingText">Este espacio permanecerá aquí, siempre.</div>
-            <div id="signature"></div>
+            <div id="firma"></div>
         </footer>
     </div>
     
@@ -440,32 +347,14 @@
     </audio>
 
     <script>
-        // Datos que cambian cada vez que se recarga la página
-        const mensajesCompletos = [
-            {
-                principal: "Aquí sigo",
-                secundario: "Hoy solo quería que supieras que estoy aquí. No como algo ruidoso, sino como algo que permanece."
-            },
-            {
-                principal: "No todo lo importante se dice",
-                secundario: "A veces las palabras sobran cuando la presencia habla por sí sola."
-            },
-            {
-                principal: "Simplemente aquí",
-                secundario: "Sin exigencias, sin ruido. Solo la certeza de que algunas cosas no necesitan explicación."
-            },
-            {
-                principal: "Contigo",
-                secundario: "En el silencio, en la calma, en lo que no se nombra pero se siente."
-            },
-            {
-                principal: "Presente",
-                secundario: "Estuve cuando no era fácil. Y sigo estando. Porque algunas personas cambian el peso de la vida."
-            },
-            {
-                principal: "Algunas cosas se sostienen estando",
-                secundario: "No entraste como un momento. Entraste como algo que se acomoda y ya no se va."
-            }
+        // Un solo mensaje (no dos como antes)
+        const mensajesUnicos = [
+            "Aquí sigo. Sin ruido, con calma.",
+            "No todo lo importante se dice.",
+            "Simplemente aquí. Sin exigencias.",
+            "Contigo, en lo que no se nombra pero se siente.",
+            "Presente. Estuve cuando no era fácil y sigo estando.",
+            "Algunas cosas se sostienen estando."
         ];
 
         const firmas = [
@@ -480,19 +369,18 @@
         // Generar array de 96 fotos
         const fotos = Array.from({length: 96}, (_, i) => `fotos/foto${i + 1}.jpg`);
         
-        // Música local - archivos en carpeta "musica"
-        const canciones = [
-            { archivo: "musica/musica1.mp3", nombre: "Canción 1" },
-            { archivo: "musica/musica2.mp3", nombre: "Canción 2" },
-            { archivo: "musica/musica3.mp3", nombre: "Canción 3" },
-            { archivo: "musica/musica4.mp3", nombre: "Canción 4" },
-            { archivo: "musica/musica5.mp3", nombre: "Canción 5" }
-        ];
+        // Música local - basado en tu estructura de carpeta
+        // Generar array de música dinámicamente (musica1.mp3, musica2.mp3, etc.)
+        // Puedes agregar más archivos según necesites
+        const canciones = Array.from({length: 10}, (_, i) => ({
+            archivo: `musica/musica${i + 1}.mp3`,
+            nombre: `Canción ${i + 1}`
+        })).filter((_, i) => i < 5); // Limitar a 5 canciones por ahora
 
         // Variables globales
         let audioIniciado = false;
         let musicaActual = null;
-        let interaccionUsuario = false;
+        let animacionTerminada = false;
 
         // Función para obtener un elemento aleatorio
         function getRandomElement(arr) {
@@ -505,29 +393,65 @@
             return shuffled.slice(0, count);
         }
 
+        // Configurar animación de imágenes a pantalla completa
+        function setupAnimacion() {
+            const animationContainer = document.getElementById('fullscreenAnimation');
+            
+            // Seleccionar 3 imágenes aleatorias para la animación
+            const animationImages = selectUniqueRandom(fotos, 3);
+            
+            // Crear elementos de imagen para la animación
+            animationImages.forEach((imgSrc, index) => {
+                const img = document.createElement('img');
+                img.className = 'animation-image';
+                img.src = imgSrc;
+                img.alt = `Imagen ${index + 1}`;
+                img.onerror = function() {
+                    // Si una imagen no carga, usar una de respaldo
+                    this.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop';
+                };
+                animationContainer.appendChild(img);
+            });
+            
+            // Después de 12 segundos, ocultar animación y mostrar contenido
+            setTimeout(() => {
+                animationContainer.style.opacity = '0';
+                animationContainer.style.transition = 'opacity 1s ease';
+                
+                setTimeout(() => {
+                    animationContainer.style.display = 'none';
+                    document.getElementById('mainContainer').style.display = 'block';
+                    animacionTerminada = true;
+                    
+                    // Si el usuario ya tocó la pantalla, iniciar música automáticamente
+                    if (window.userHasInteracted) {
+                        iniciarMusicaAutomaticamente();
+                    }
+                }, 1000);
+            }, 12000);
+        }
+
         // Inicializar contenido
         function initContenido() {
-            // Seleccionar mensaje aleatorio
-            const mensaje = getRandomElement(mensajesCompletos);
-            document.getElementById("mainMessage").textContent = mensaje.principal;
-            document.getElementById("secondaryMessage").textContent = mensaje.secundario;
+            // Seleccionar mensaje único aleatorio
+            document.getElementById("unicoMensaje").textContent = getRandomElement(mensajesUnicos);
             
             // Seleccionar firma aleatoria
-            document.getElementById("signature").textContent = getRandomElement(firmas);
+            document.getElementById("firma").textContent = getRandomElement(firmas);
             
             // Seleccionar música aleatoria
             musicaActual = getRandomElement(canciones);
-            const audioElement = document.getElementById("backgroundMusic");
+            const audioElement = document.getElementById('backgroundMusic');
             audioElement.src = musicaActual.archivo;
             
             // Actualizar info de la canción
-            document.getElementById("songInfo").textContent = `🎵 ${musicaActual.nombre}`;
+            document.getElementById('songInfo').textContent = `🎵 ${musicaActual.nombre}`;
             
             // Configurar galería
             setupGaleria();
             
             console.log("Contenido inicializado con:", {
-                mensaje: mensaje.principal,
+                mensaje: document.getElementById("unicoMensaje").textContent,
                 cancion: musicaActual.nombre
             });
         }
@@ -537,8 +461,8 @@
             const galleryContainer = document.getElementById('imagenes');
             galleryContainer.innerHTML = '';
             
-            // Seleccionar 4 imágenes aleatorias para la galería
-            const galleryImages = selectUniqueRandom(fotos, 4);
+            // Seleccionar 6 imágenes aleatorias para la galería
+            const galleryImages = selectUniqueRandom(fotos, 6);
             
             galleryImages.forEach((imgSrc, index) => {
                 const frame = document.createElement('div');
@@ -550,7 +474,7 @@
                 img.alt = `Imagen ${index + 1}`;
                 img.loading = "lazy";
                 img.onerror = function() {
-                    // Si la imagen no carga, simplemente ocultamos el frame
+                    // Si la imagen no carga, ocultar el frame
                     this.parentElement.style.display = 'none';
                 };
                 
@@ -559,54 +483,38 @@
             });
         }
 
-        // Función para comenzar la experiencia
-        function beginExperience() {
-            interaccionUsuario = true;
-            
-            // Ocultar pantalla de bienvenida
-            const welcomeScreen = document.getElementById('welcomeScreen');
-            welcomeScreen.style.animation = 'fadeOut 0.5s ease forwards';
-            
-            setTimeout(() => {
-                welcomeScreen.style.display = 'none';
-                document.getElementById('mainContainer').style.display = 'block';
-                
-                // Iniciar música
-                iniciarMusica();
-            }, 500);
-        }
-
-        // Iniciar música (solo después de interacción del usuario)
-        function iniciarMusica() {
+        // Función para iniciar música automáticamente
+        function iniciarMusicaAutomaticamente() {
             if (audioIniciado) return;
             
             const audioElement = document.getElementById('backgroundMusic');
+            const playButton = document.getElementById('audioButton');
             
-            // Intentar reproducir
             audioElement.play().then(() => {
                 console.log("Música iniciada automáticamente");
                 audioIniciado = true;
-                document.getElementById('audioButton').classList.add('playing');
+                playButton.innerHTML = '<span>⏸️</span><span>Pausar música</span>';
             }).catch(error => {
                 console.log("Error al iniciar música automáticamente:", error);
                 // Mostrar mensaje para que el usuario toque el botón
                 document.getElementById('songInfo').innerHTML = 
-                    '🎵 Toca el botón para iniciar la música';
+                    'Toca el botón para iniciar la música';
             });
         }
 
         // Alternar reproducción de audio
         function toggleAudio() {
             const audioElement = document.getElementById('backgroundMusic');
-            const audioButton = document.getElementById('audioButton');
+            const playButton = document.getElementById('audioButton');
             
             if (audioElement.paused) {
                 audioElement.play();
-                audioButton.classList.add('playing');
-                console.log("Música reanudada");
+                audioIniciado = true;
+                playButton.innerHTML = '<span>⏸️</span><span>Pausar música</span>';
+                console.log("Música iniciada manualmente");
             } else {
                 audioElement.pause();
-                audioButton.classList.remove('playing');
+                playButton.innerHTML = '<span>▶️</span><span>Reanudar música</span>';
                 console.log("Música pausada");
             }
         }
@@ -632,58 +540,63 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Configurar interacción para iniciar experiencia
+        // Configurar interacción del usuario
         function setupInteraccion() {
-            // Capturar cualquier interacción del usuario
-            const eventos = ['click', 'touchstart', 'scroll', 'keydown'];
-            
-            const iniciarConInteraccion = () => {
-                if (!interaccionUsuario) {
-                    interaccionUsuario = true;
-                    beginExperience();
+            // Marcar cuando el usuario interactúa por primera vez
+            const marcarInteraccion = () => {
+                if (!window.userHasInteracted) {
+                    window.userHasInteracted = true;
+                    console.log("Usuario interactuó por primera vez");
                     
-                    // Remover listeners después de la primera interacción
-                    eventos.forEach(evento => {
-                        document.removeEventListener(evento, iniciarConInteraccion);
-                    });
+                    // Si la animación ya terminó, iniciar música automáticamente
+                    if (animacionTerminada) {
+                        iniciarMusicaAutomaticamente();
+                    }
                 }
             };
             
-            // Agregar listeners para todos los eventos de interacción
-            eventos.forEach(evento => {
-                document.addEventListener(evento, iniciarConInteraccion, { once: false });
-            });
+            // Capturar cualquier interacción del usuario
+            const eventos = ['click', 'touchstart', 'touchmove', 'touchend', 'scroll'];
             
-            // También permitir iniciar con el botón de bienvenida
-            document.getElementById('welcomeScreen').addEventListener('click', (e) => {
-                if (e.target.classList.contains('tap-to-begin') || 
-                    e.target.closest('.tap-to-begin')) {
-                    return; // El botón ya tiene su propio handler
-                }
-                iniciarConInteraccion();
+            eventos.forEach(evento => {
+                document.addEventListener(evento, marcarInteraccion, { once: false });
             });
         }
 
         // Inicializar cuando la página cargue
         window.addEventListener('load', () => {
+            // Inicializar contenido
             initContenido();
+            
+            // Configurar animación
+            setupAnimacion();
+            
+            // Configurar interacción
             setupInteraccion();
             
-            // Configurar audio para que se reinicie si hay error
+            // Configurar audio para manejar errores
             const audioElement = document.getElementById('backgroundMusic');
             audioElement.addEventListener('error', (e) => {
                 console.error("Error cargando audio:", e);
                 document.getElementById('songInfo').innerHTML = 
-                    '🎵 La música no está disponible en este momento';
+                    'Error cargando la música. Verifica los archivos en la carpeta "musica".';
+                document.getElementById('audioButton').style.display = 'none';
             });
             
-            // Actualizar estado del botón cuando la música termina/pausa
+            // Cuando la música termine, mostrar mensaje
+            audioElement.addEventListener('ended', () => {
+                console.log("Música terminada");
+            });
+            
+            // Cuando la música se pause, actualizar botón
             audioElement.addEventListener('pause', () => {
-                document.getElementById('audioButton').classList.remove('playing');
+                document.getElementById('audioButton').innerHTML = 
+                    '<span>▶️</span><span>Reanudar música</span>';
             });
             
             audioElement.addEventListener('play', () => {
-                document.getElementById('audioButton').classList.add('playing');
+                document.getElementById('audioButton').innerHTML = 
+                    '<span>⏸️</span><span>Pausar música</span>';
             });
         });
 
