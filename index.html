@@ -11,6 +11,11 @@
             --color3: #018ABE;
             --color4: #97CADB;
             --color5: #D6E8EE;
+            --rojo1: #8B0000;
+            --rojo2: #B22222;
+            --rojo3: #DC143C;
+            --dorado1: #D4AF37;
+            --dorado2: #FFD700;
         }
         
         * {
@@ -32,6 +37,114 @@
             touch-action: manipulation;
         }
         
+        /* PANTALLA DE CARGA CON CRONÓMETRO REGRESIVO */
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--color1) 0%, var(--color2) 100%);
+            z-index: 4000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-content {
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .loading-title {
+            font-size: 2rem;
+            color: var(--dorado2);
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
+            font-weight: 300;
+        }
+        
+        .loading-subtitle {
+            font-size: 1.2rem;
+            color: var(--color4);
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .countdown-container {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 2px solid var(--dorado1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .countdown-title {
+            font-size: 1.3rem;
+            color: var(--color5);
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        
+        .countdown-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .countdown-unit {
+            background: rgba(1, 138, 190, 0.2);
+            border-radius: 15px;
+            padding: 15px 10px;
+            min-width: 100px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(1, 138, 190, 0.3);
+        }
+        
+        .countdown-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dorado2);
+            line-height: 1;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .countdown-label {
+            font-size: 0.9rem;
+            color: var(--color4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .countdown-separator {
+            display: flex;
+            align-items: center;
+            color: var(--color3);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .date-display {
+            margin-top: 30px;
+            font-size: 1.1rem;
+            color: var(--color5);
+            background: rgba(2, 69, 122, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--dorado1);
+        }
+        
+        .date-display span {
+            color: var(--dorado2);
+            font-weight: 600;
+        }
+        
         /* Animación de imágenes a pantalla completa */
         #fullscreenAnimation {
             position: fixed;
@@ -41,7 +154,7 @@
             height: 100%;
             background: #000;
             z-index: 3000;
-            display: flex;
+            display: none; /* Oculto hasta que pase la pantalla de carga */
             justify-content: center;
             align-items: center;
         }
@@ -96,6 +209,68 @@
             margin: 0 auto;
             padding: 20px 15px;
             animation: fadeIn 1s ease;
+        }
+        
+        /* Cronómetro de tiempo transcurrido */
+        .time-counter {
+            background: linear-gradient(135deg, rgba(2, 69, 122, 0.8) 0%, rgba(1, 138, 190, 0.8) 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            border: 1px solid rgba(151, 202, 219, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .time-counter-title {
+            font-size: 1.4rem;
+            color: var(--dorado2);
+            margin-bottom: 20px;
+            font-weight: 500;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .time-counter-display {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .time-unit {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 15px 10px;
+            min-width: 80px;
+            border: 1px solid rgba(151, 202, 219, 0.2);
+        }
+        
+        .time-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+        
+        .time-label {
+            font-size: 0.8rem;
+            color: var(--color4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .time-start-date {
+            font-size: 1rem;
+            color: var(--color5);
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+        
+        .time-start-date span {
+            color: var(--dorado2);
+            font-weight: 500;
         }
         
         /* Mensaje único central */
@@ -252,6 +427,16 @@
             to { opacity: 0; }
         }
         
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .main-container {
@@ -279,6 +464,32 @@
             .audio-section {
                 margin: 35px 0;
             }
+            
+            .loading-title {
+                font-size: 1.6rem;
+            }
+            
+            .countdown-unit {
+                min-width: 80px;
+                padding: 12px 8px;
+            }
+            
+            .countdown-value {
+                font-size: 2rem;
+            }
+            
+            .time-counter {
+                padding: 20px 15px;
+            }
+            
+            .time-unit {
+                min-width: 70px;
+                padding: 12px 8px;
+            }
+            
+            .time-value {
+                font-size: 1.5rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -298,6 +509,44 @@
             .message-container {
                 margin: 25px 0 20px;
             }
+            
+            .loading-title {
+                font-size: 1.4rem;
+            }
+            
+            .countdown-display {
+                gap: 8px;
+            }
+            
+            .countdown-unit {
+                min-width: 70px;
+                padding: 10px 5px;
+            }
+            
+            .countdown-value {
+                font-size: 1.8rem;
+            }
+            
+            .countdown-label {
+                font-size: 0.8rem;
+            }
+            
+            .time-counter-display {
+                gap: 8px;
+            }
+            
+            .time-unit {
+                min-width: 60px;
+                padding: 10px 5px;
+            }
+            
+            .time-value {
+                font-size: 1.3rem;
+            }
+            
+            .time-label {
+                font-size: 0.7rem;
+            }
         }
         
         /* iPhone notch/padding seguro */
@@ -307,11 +556,63 @@
                 padding-right: max(15px, env(safe-area-inset-right));
                 padding-bottom: max(30px, env(safe-area-inset-bottom));
             }
+            
+            #loadingScreen {
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+            }
         }
     </style>
 </head>
 
 <body>
+    <!-- Pantalla de carga con cronómetro regresivo -->
+    <div id="loadingScreen">
+        <div class="loading-content">
+            <h1 class="loading-title pulse">Aquí sigo</h1>
+            <p class="loading-subtitle">Un espacio especial disponible próximamente</p>
+            
+            <div class="countdown-container">
+                <div class="countdown-title">Disponible en:</div>
+                <div class="countdown-display">
+                    <div class="countdown-unit">
+                        <div id="countdown-days" class="countdown-value">00</div>
+                        <div class="countdown-label">Días</div>
+                    </div>
+                    
+                    <div class="countdown-separator">:</div>
+                    
+                    <div class="countdown-unit">
+                        <div id="countdown-hours" class="countdown-value">00</div>
+                        <div class="countdown-label">Horas</div>
+                    </div>
+                    
+                    <div class="countdown-separator">:</div>
+                    
+                    <div class="countdown-unit">
+                        <div id="countdown-minutes" class="countdown-value">00</div>
+                        <div class="countdown-label">Minutos</div>
+                    </div>
+                    
+                    <div class="countdown-separator">:</div>
+                    
+                    <div class="countdown-unit">
+                        <div id="countdown-seconds" class="countdown-value">00</div>
+                        <div class="countdown-label">Segundos</div>
+                    </div>
+                </div>
+                
+                <div class="date-display">
+                    Fecha de disponibilidad: <span>14 de Febrero de 2026</span>
+                </div>
+            </div>
+            
+            <div class="date-display" style="margin-top: 20px; border-left-color: var(--rojo3);">
+                Llevamos: <span id="elapsed-preview">Calculando...</span>
+            </div>
+        </div>
+    </div>
+    
     <!-- Animación de imágenes a pantalla completa -->
     <div id="fullscreenAnimation">
         <!-- Las imágenes se insertarán aquí -->
@@ -325,6 +626,46 @@
     
     <!-- Contenedor principal -->
     <div id="mainContainer" class="main-container">
+        <!-- Cronómetro de tiempo transcurrido -->
+        <div class="time-counter">
+            <div class="time-counter-title">Tiempo transcurrido desde nuestro inicio</div>
+            <div class="time-counter-display">
+                <div class="time-unit">
+                    <div id="elapsed-years" class="time-value">0</div>
+                    <div class="time-label">Años</div>
+                </div>
+                
+                <div class="time-unit">
+                    <div id="elapsed-months" class="time-value">0</div>
+                    <div class="time-label">Meses</div>
+                </div>
+                
+                <div class="time-unit">
+                    <div id="elapsed-days" class="time-value">0</div>
+                    <div class="time-label">Días</div>
+                </div>
+                
+                <div class="time-unit">
+                    <div id="elapsed-hours" class="time-value">0</div>
+                    <div class="time-label">Horas</div>
+                </div>
+                
+                <div class="time-unit">
+                    <div id="elapsed-minutes" class="time-value">0</div>
+                    <div class="time-label">Minutos</div>
+                </div>
+                
+                <div class="time-unit">
+                    <div id="elapsed-seconds" class="time-value">0</div>
+                    <div class="time-label">Segundos</div>
+                </div>
+            </div>
+            
+            <div class="time-start-date">
+                Inicio: <span>22 de Agosto de 2024, 8:00 PM</span>
+            </div>
+        </div>
+        
         <!-- Mensaje único central -->
         <div class="message-container">
             <h1 id="unicoMensaje"></h1>
@@ -354,6 +695,10 @@
     </audio>
 
     <script>
+        // Fechas importantes
+        const FECHA_INICIO = new Date('2024-08-22T20:00:00'); // 22 de agosto de 2024, 8:00 PM
+        const FECHA_DISPONIBILIDAD = new Date('2026-02-14T00:00:00'); // 14 de febrero de 2026, 12:00 AM
+        
         // Un solo mensaje
         const mensajesUnicos = [
             "Aquí sigo. Sin ruido, con calma.",
@@ -393,6 +738,8 @@
         let musicaActual = null;
         let animacionTerminada = false;
         let autoplayBlocked = false;
+        let countdownInterval = null;
+        let elapsedInterval = null;
 
         // Función para obtener un elemento aleatorio
         function getRandomElement(arr) {
@@ -434,9 +781,101 @@
             return cancionesValidas;
         }
 
+        // CRONÓMETRO REGRESIVO hasta el 14 de febrero de 2026
+        function iniciarCountdown() {
+            function actualizarCountdown() {
+                const ahora = new Date();
+                const diferencia = FECHA_DISPONIBILIDAD - ahora;
+                
+                if (diferencia <= 0) {
+                    // ¡La fecha ya pasó! Mostrar el contenido
+                    clearInterval(countdownInterval);
+                    mostrarContenido();
+                    return;
+                }
+                
+                // Calcular días, horas, minutos, segundos
+                const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+                const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+                const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+                
+                // Actualizar display
+                document.getElementById('countdown-days').textContent = dias.toString().padStart(2, '0');
+                document.getElementById('countdown-hours').textContent = horas.toString().padStart(2, '0');
+                document.getElementById('countdown-minutes').textContent = minutos.toString().padStart(2, '0');
+                document.getElementById('countdown-seconds').textContent = segundos.toString().padStart(2, '0');
+            }
+            
+            // Actualizar inmediatamente y luego cada segundo
+            actualizarCountdown();
+            countdownInterval = setInterval(actualizarCountdown, 1000);
+        }
+
+        // CRONÓMETRO PROGRESIVO desde el 22 de agosto de 2024, 8:00 PM
+        function iniciarTiempoTranscurrido() {
+            function actualizarTiempoTranscurrido() {
+                const ahora = new Date();
+                const diferencia = ahora - FECHA_INICIO;
+                
+                // Calcular años, meses, días, horas, minutos, segundos
+                const segundosTotales = Math.floor(diferencia / 1000);
+                const minutosTotales = Math.floor(segundosTotales / 60);
+                const horasTotales = Math.floor(minutosTotales / 60);
+                const diasTotales = Math.floor(horasTotales / 24);
+                
+                // Calcular años (aproximado)
+                const años = Math.floor(diasTotales / 365.25);
+                const diasRestantes = diasTotales - (años * 365.25);
+                
+                // Calcular meses (aproximado)
+                const meses = Math.floor(diasRestantes / 30.44);
+                const dias = Math.floor(diasRestantes - (meses * 30.44));
+                
+                const horas = horasTotales % 24;
+                const minutos = minutosTotales % 60;
+                const segundos = segundosTotales % 60;
+                
+                // Actualizar display principal
+                document.getElementById('elapsed-years').textContent = años;
+                document.getElementById('elapsed-months').textContent = meses;
+                document.getElementById('elapsed-days').textContent = dias;
+                document.getElementById('elapsed-hours').textContent = horas.toString().padStart(2, '0');
+                document.getElementById('elapsed-minutes').textContent = minutos.toString().padStart(2, '0');
+                document.getElementById('elapsed-seconds').textContent = segundos.toString().padStart(2, '0');
+                
+                // Actualizar preview en pantalla de carga
+                const previewElement = document.getElementById('elapsed-preview');
+                if (previewElement) {
+                    previewElement.textContent = `${años} años, ${meses} meses, ${dias} días, ${horas} horas, ${minutos} minutos, ${segundos} segundos`;
+                }
+            }
+            
+            // Actualizar inmediatamente y luego cada segundo
+            actualizarTiempoTranscurrido();
+            elapsedInterval = setInterval(actualizarTiempoTranscurrido, 1000);
+        }
+
+        // Mostrar contenido principal (cuando ya pasó el 14 de febrero de 2026)
+        function mostrarContenido() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            
+            // Ocultar pantalla de carga con animación
+            loadingScreen.style.opacity = '0';
+            loadingScreen.style.transition = 'opacity 1s ease';
+            
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                
+                // Mostrar animación de imágenes
+                setupAnimacion();
+            }, 1000);
+        }
+
         // Configurar animación de imágenes a pantalla completa
         function setupAnimacion() {
             const animationContainer = document.getElementById('fullscreenAnimation');
+            animationContainer.style.display = 'flex';
             
             // Seleccionar 3 imágenes aleatorias para la animación
             const animationImages = selectUniqueRandom(fotos, 3);
@@ -463,6 +902,9 @@
                     animationContainer.style.display = 'none';
                     document.getElementById('mainContainer').style.display = 'block';
                     animacionTerminada = true;
+                    
+                    // Intentar reproducir música
+                    intentarReproducirMusica();
                 }, 1000);
             }, 12000);
         }
@@ -691,17 +1133,20 @@
 
         // Inicializar cuando la página cargue
         window.addEventListener('load', async () => {
-            // Inicializar contenido (verifica archivos primero)
-            await initContenido();
+            // Iniciar cronómetro de tiempo transcurrido (siempre)
+            iniciarTiempoTranscurrido();
             
-            // Configurar animación
-            setupAnimacion();
-            
-            // Configurar manejadores de audio
-            setupAudioHandlers();
-            
-            // Intentar reproducir música después de un breve delay
-            setTimeout(intentarReproducirMusica, 500);
+            // Verificar si ya pasó la fecha de disponibilidad
+            const ahora = new Date();
+            if (ahora >= FECHA_DISPONIBILIDAD) {
+                // Si ya pasó la fecha, mostrar contenido directamente
+                mostrarContenido();
+                await initContenido();
+                setupAudioHandlers();
+            } else {
+                // Si aún no pasa la fecha, mostrar pantalla de carga con countdown
+                iniciarCountdown();
+            }
             
             // Si el usuario interactúa y el autoplay estaba bloqueado, intentar reproducir
             document.addEventListener('click', function intentarReproducir() {
