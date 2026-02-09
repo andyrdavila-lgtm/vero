@@ -1,224 +1,334 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Aquí sigo</title>
-<style>
-    body {
-        margin: 0;
-        background: #0b0b0b;
-        color: #e6e6e6;
-        font-family: 'Helvetica Neue', sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        text-align: center;
-    }
-
-    .container {
-        max-width: 700px;
-        padding: 40px;
-        animation: fadeIn 3s ease;
-    }
-
-    h1 {
-        font-weight: 300;
-        margin-bottom: 30px;
-    }
-
-    p {
-        font-size: 18px;
-        line-height: 1.6;
-        margin-bottom: 40px;
-        opacity: 0.9;
-    }
-
-    img {
-        width: 100%;
-        margin-bottom: 20px;
-        border-radius: 4px;
-        opacity: 0.95;
-    }
-
-    footer {
-        margin-top: 50px;
-        font-size: 14px;
-        opacity: 0.6;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aquí sigo</title>
+    <style>
+        :root {
+            --color1: #001848;    /* Fondo oscuro */
+            --color2: #02457A;    /* Títulos */
+            --color3: #018ABE;    /* Énfasis */
+            --color4: #97CADB;    /* Texto secundario */
+            --color5: #D6E8EE;    /* Texto principal */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, var(--color1) 0%, var(--color2) 100%);
+            color: var(--color5);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            animation: fadeIn 2s ease;
+        }
+        
+        /* Mensajes principales */
+        .message-container {
+            background: rgba(1, 138, 190, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px 30px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(151, 202, 219, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 24, 72, 0.3);
+        }
+        
+        #frase {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 25px;
+            color: var(--color5);
+            line-height: 1.4;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        #mensaje {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            color: var(--color4);
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(214, 232, 238, 0.2);
+        }
+        
+        /* Galería de imágenes */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .photo-frame {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            aspect-ratio: 4/3;
+            background: var(--color1);
+        }
+        
+        .photo-frame:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .photo-frame:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Reproductor de Spotify */
+        .music-player {
+            margin: 40px 0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--color4);
+            opacity: 0.8;
+            padding-top: 30px;
+            border-top: 1px solid rgba(1, 138, 190, 0.3);
+        }
+        
+        #cierre {
+            display: block;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            color: var(--color3);
+            font-style: italic;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .message-container {
+                padding: 30px 20px;
+                margin-bottom: 30px;
+            }
+            
+            #frase {
+                font-size: 1.5rem;
+            }
+            
+            #mensaje {
+                font-size: 1.1rem;
+            }
+            
+            .gallery {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .photo-frame {
+                aspect-ratio: 16/9;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            #frase {
+                font-size: 1.3rem;
+            }
+            
+            .message-container {
+                padding: 25px 20px;
+            }
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 1s ease forwards;
+            opacity: 0;
+        }
+        
+        .fade-in:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+        
+        .fade-in:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        
+        /* Scroll personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--color1);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--color3);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color4);
+        }
+    </style>
 </head>
 
 <body>
+    <div class="container">
+        <!-- Mensaje principal -->
+        <div class="message-container fade-in">
+            <h1 id="frase"></h1>
+            <p id="mensaje"></p>
+        </div>
+        
+        <!-- Galería de imágenes -->
+        <div id="imagenes" class="gallery fade-in"></div>
+        
+        <!-- Reproductor de Spotify -->
+        <div class="music-player fade-in">
+            <iframe id="spotifyPlayer" style="border-radius:12px" 
+                src="https://open.spotify.com/embed/track/4cOdK2wGLETKBW3PvgPWqT?utm_source=generator&theme=0"
+                width="100%" 
+                height="152" 
+                frameBorder="0" 
+                allowfullscreen="" 
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                loading="lazy">
+            </iframe>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="fade-in">
+            Este espacio permanecerá aquí, siempre.<br>
+            <span id="cierre"></span>
+        </footer>
+    </div>
 
-<div class="container">
-    <h1 id="frase"></h1>
+    <script>
+        const frases = [
+            "No todo lo importante se dice.",
+            "Hoy solo quería que supieras que aquí sigo.",
+            "Algunas cosas se sostienen estando.",
+            "Este lugar existe porque tú importas."
+        ];
 
-    <div id="imagenes"></div>
+        const mensajes = [
+            "Acompañar no siempre es saber qué hacer. A veces es no irse.",
+            "No entraste a mi vida como un momento. Entraste como algo que se acomoda y ya no se va.",
+            "Estuve cuando no era fácil. Y sigo estando.",
+            "Hay personas que cambian el peso de la vida. Tú eres una de ellas."
+        ];
 
-    <p id="mensaje"></p>
+        const cierres = [
+            "Aquí sigo.",
+            "Sin ruido.",
+            "Con calma.",
+            "Sin exigencias."
+        ];
 
-    <footer>
-        Este dominio no tiene fecha de vencimiento.<br>
-        <span id="cierre"></span>
-    </footer>
-</div>
+        // Generar array de 96 fotos dinámicamente
+        const fotos = Array.from({length: 96}, (_, i) => `fotos/foto${i + 1}.jpg`);
+        
+        // Playlist de Spotify (puedes cambiar estos IDs)
+        const spotifyTracks = [
+            "4cOdK2wGLETKBW3PvgPWqT", // Track 1
+            "6habFhsOp2NvshLv26DqMb", // Track 2
+            "0VjIjW4GlUZAMYd2vXMi3b"  // Track 3
+        ];
 
-<audio id="audio" autoplay loop></audio>
+        function random(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
 
-<script>
-    const frases = [
-        "No todo lo importante se dice.",
-        "Hoy solo quería que supieras que aquí sigo.",
-        "Algunas cosas se sostienen estando.",
-        "Este lugar existe porque tú importas."
-    ];
+        // Inicializar contenido
+        function initContent() {
+            document.getElementById("frase").innerText = random(frases);
+            document.getElementById("mensaje").innerText = random(mensajes);
+            document.getElementById("cierre").innerText = random(cierres);
+            
+            // Seleccionar y mostrar imágenes (2-4 dependiendo del dispositivo)
+            const contenedorFotos = document.getElementById("imagenes");
+            contenedorFotos.innerHTML = '';
+            
+            // Determinar cuántas fotos mostrar según el ancho de pantalla
+            const screenWidth = window.innerWidth;
+            const numFotos = screenWidth < 768 ? 2 : 3;
+            
+            // Seleccionar fotos aleatorias sin repetición
+            const fotosAleatorias = [...fotos]
+                .sort(() => Math.random() - 0.5)
+                .slice(0, numFotos);
+            
+            // Crear elementos de imagen
+            fotosAleatorias.forEach(foto => {
+                const frame = document.createElement('div');
+                frame.className = 'photo-frame';
+                
+                const img = document.createElement('img');
+                img.src = foto;
+                img.alt = "Imagen especial";
+                img.loading = "lazy"; // Optimización para móvil
+                
+                frame.appendChild(img);
+                contenedorFotos.appendChild(frame);
+            });
+            
+            // Seleccionar canción aleatoria de Spotify
+            const trackId = random(spotifyTracks);
+            const spotifyPlayer = document.getElementById('spotifyPlayer');
+            spotifyPlayer.src = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0`;
+        }
 
-    const mensajes = [
-        "Acompañar no siempre es saber qué hacer. A veces es no irse.",
-        "No entraste a mi vida como un momento. Entraste como algo que se acomoda y ya no se va.",
-        "Estuve cuando no era fácil. Y sigo estando.",
-        "Hay personas que cambian el peso de la vida. Tú eres una de ellas."
-    ];
-
-    const cierres = [
-        "Aquí sigo.",
-        "Sin ruido.",
-        "Con calma.",
-        "Sin exigencias."
-    ];
-
-    const fotos = [
-        "fotos/foto1.jpg",
-        "fotos/foto2.jpg",
-        "fotos/foto3.jpg",
-        "fotos/foto4.jpg",
-        "fotos/foto5.jpg",
-        "fotos/foto6.jpg",
-        "fotos/foto7.jpg",
-        "fotos/foto8.jpg",
-        "fotos/foto9.jpg",
-        "fotos/foto10.jpg",
-        "fotos/foto11.jpg",
-        "fotos/foto12.jpg",
-        "fotos/foto13.jpg",
-        "fotos/foto14.jpg",
-        "fotos/foto15.jpg",
-        "fotos/foto16.jpg",
-        "fotos/foto17.jpg",
-        "fotos/foto18.jpg",
-        "fotos/foto19.jpg",
-        "fotos/foto20.jpg",
-        "fotos/foto21.jpg",
-        "fotos/foto22.jpg",
-        "fotos/foto23.jpg",
-        "fotos/foto24.jpg",
-        "fotos/foto25.jpg",
-        "fotos/foto26.jpg",
-        "fotos/foto27.jpg",
-        "fotos/foto28.jpg",
-        "fotos/foto29.jpg",
-        "fotos/foto30.jpg",
-        "fotos/foto31.jpg",
-        "fotos/foto32.jpg",
-        "fotos/foto33.jpg",
-        "fotos/foto34.jpg",
-        "fotos/foto35.jpg",
-        "fotos/foto36.jpg",
-        "fotos/foto37.jpg",
-        "fotos/foto38.jpg",
-        "fotos/foto39.jpg",
-        "fotos/foto40.jpg",
-        "fotos/foto41.jpg",
-        "fotos/foto42.jpg",
-        "fotos/foto43.jpg",
-        "fotos/foto44.jpg",
-        "fotos/foto45.jpg",
-        "fotos/foto46.jpg",
-        "fotos/foto47.jpg",
-        "fotos/foto48.jpg",
-        "fotos/foto49.jpg",
-        "fotos/foto50.jpg",
-        "fotos/foto51.jpg",
-        "fotos/foto52.jpg",
-        "fotos/foto53.jpg",
-        "fotos/foto54.jpg",
-        "fotos/foto55.jpg",
-        "fotos/foto56.jpg",
-        "fotos/foto57.jpg",
-        "fotos/foto58.jpg",
-        "fotos/foto59.jpg",
-        "fotos/foto60.jpg",
-        "fotos/foto61.jpg",
-        "fotos/foto62.jpg",
-        "fotos/foto63.jpg",
-        "fotos/foto64.jpg",
-        "fotos/foto65.jpg",
-        "fotos/foto66.jpg",
-        "fotos/foto67.jpg",
-        "fotos/foto68.jpg",
-        "fotos/foto69.jpg",
-        "fotos/foto70.jpg",
-        "fotos/foto71.jpg",
-        "fotos/foto72.jpg",
-        "fotos/foto73.jpg",
-        "fotos/foto74.jpg",
-        "fotos/foto75.jpg",
-        "fotos/foto76.jpg",
-        "fotos/foto77.jpg",
-        "fotos/foto78.jpg",
-        "fotos/foto79.jpg",
-        "fotos/foto80.jpg",
-        "fotos/foto81.jpg",
-        "fotos/foto82.jpg",
-        "fotos/foto83.jpg",
-        "fotos/foto84.jpg",
-        "fotos/foto85.jpg",
-        "fotos/foto86.jpg",
-        "fotos/foto87.jpg",
-        "fotos/foto88.jpg",
-        "fotos/foto89.jpg",
-        "fotos/foto90.jpg",
-        "fotos/foto91.jpg",
-        "fotos/foto92.jpg",
-        "fotos/foto93.jpg",
-        "fotos/foto94.jpg",
-        "fotos/foto95.jpg",
-        "fotos/foto96.jpg"
-    ];
-
-    const musica = [
-        "musica/song1.mp3",
-        "musica/song2.mp3",
-        "musica/song3.mp3"
-    ];
-
-    function random(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    document.getElementById("frase").innerText = random(frases);
-    document.getElementById("mensaje").innerText = random(mensajes);
-    document.getElementById("cierre").innerText = random(cierres);
-
-    // Fotos aleatorias (2)
-    const contenedorFotos = document.getElementById("imagenes");
-    fotos.sort(() => 0.5 - Math.random()).slice(0,2).forEach(foto => {
-        const img = document.createElement("img");
-        img.src = foto;
-        contenedorFotos.appendChild(img);
-    });
-
-    // Música
-    const audio = document.getElementById("audio");
-    audio.src = random(musica);
-    audio.volume = 0.3;
-</script>
-
+        // Cargar contenido cuando la página esté lista
+        document.addEventListener('DOMContentLoaded', initContent);
+        
+        // Actualizar diseño cuando cambie el tamaño de la ventana
+        window.addEventListener('resize', initContent);
+        
+        // Efecto de carga suave
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '1';
+        });
+    </script>
 </body>
 </html>
