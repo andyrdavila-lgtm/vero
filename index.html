@@ -1,719 +1,213 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aquí sigo</title>
-    <style>
-        :root {
-            --color1: #000000;
-            --color2: #02457A;
-            --color3: #018ABE;
-            --color4: #97CADB;
-            --color5: #D6E8EE;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: #000000;
-            color: var(--color5);
-            min-height: 100vh;
-            line-height: 1.5;
-            overflow-x: hidden;
-            position: relative;
-            -webkit-font-smoothing: antialiased;
-            touch-action: manipulation;
-        }
-        
-        /* Pantalla de carga/animación */
-        #loadingScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 1s ease;
-        }
-        
-        .loading-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            opacity: 0;
-            animation: imageFade 9s infinite;
-        }
-        
-        .loading-image:nth-child(1) { animation-delay: 0s; }
-        .loading-image:nth-child(2) { animation-delay: 3s; }
-        .loading-image:nth-child(3) { animation-delay: 6s; }
-        
-        @keyframes imageFade {
-            0%, 100% { opacity: 0; transform: scale(1); }
-            15% { opacity: 1; transform: scale(1.05); }
-            30% { opacity: 1; transform: scale(1.03); }
-            45% { opacity: 0; transform: scale(1); }
-        }
-        
-        /* Contenedor principal */
-        .main-container {
-            display: none;
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 15px;
-            animation: fadeIn 1s ease;
-        }
-        
-        /* Notificación móvil */
-        .mobile-notification {
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(30px);
-            padding: 25px 20px;
-            border-radius: 20px;
-            border: 2px solid var(--color3);
-            box-shadow: 0 15px 40px rgba(1, 138, 190, 0.4);
-            z-index: 1500;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            animation: notificationPop 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 9s;
-        }
-        
-        @keyframes notificationPop {
-            0% {
-                transform: translate(-50%, -50%) scale(0);
-                opacity: 0;
-            }
-            70% {
-                transform: translate(-50%, -50%) scale(1.05);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
-        }
-        
-        /* Mensajes principales - optimizado móvil */
-        .message-container {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            padding: 25px 20px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(151, 202, 219, 0.2);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            margin-top: 20px;
-        }
-        
-        #frase {
-            font-size: 1.6rem;
-            font-weight: 300;
-            margin-bottom: 20px;
-            color: var(--color5);
-            line-height: 1.4;
-            text-align: center;
-        }
-        
-        #mensaje {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            color: var(--color4);
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(214, 232, 238, 0.2);
-            text-align: center;
-        }
-        
-        /* Galería móvil */
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin: 25px 0;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 1s;
-        }
-        
-        .photo-frame {
-            position: relative;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            aspect-ratio: 1/1;
-            background: #000;
-            cursor: pointer;
-        }
-        
-        .photo-frame:active {
-            transform: scale(0.98);
-        }
-        
-        .photo-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        /* Fullscreen para imágenes */
-        .image-fullscreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 2000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .fullscreen-image {
-            max-width: 100%;
-            max-height: 90vh;
-            object-fit: contain;
-            border-radius: 10px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-        }
-        
-        .close-fullscreen {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 2001;
-        }
-        
-        /* Reproductor de música móvil */
-        .music-container {
-            margin: 25px 0;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 1.5s;
-            position: relative;
-            min-height: 80px;
-        }
-        
-        .music-placeholder {
-            background: linear-gradient(135deg, rgba(1, 138, 190, 0.2), rgba(2, 69, 122, 0.2));
-            padding: 20px;
-            border-radius: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        
-        .music-placeholder:active {
-            transform: scale(0.98);
-        }
-        
-        .play-button {
-            background: var(--color3);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 0 auto;
-            transition: all 0.3s ease;
-        }
-        
-        .play-button:active {
-            transform: scale(0.95);
-            background: var(--color2);
-        }
-        
-        .spotify-player {
-            width: 100%;
-            min-height: 80px;
-            border: none;
-            display: none;
-        }
-        
-        /* Footer móvil */
-        footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--color4);
-            opacity: 0.8;
-            padding-top: 20px;
-            border-top: 1px solid rgba(1, 138, 190, 0.3);
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 2s;
-            padding-bottom: 30px;
-        }
-        
-        #cierre {
-            display: block;
-            margin-top: 10px;
-            font-size: 1rem;
-            color: var(--color3);
-            font-style: italic;
-        }
-        
-        /* Animaciones */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Utilidades */
-        .hidden {
-            display: none !important;
-        }
-        
-        .visible {
-            display: block !important;
-        }
-        
-        .flex-center {
-            display: flex !important;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        /* Scroll móvil */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #000;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--color3);
-            border-radius: 2px;
-        }
-        
-        /* Media queries para móvil */
-        @media (max-width: 768px) {
-            .main-container {
-                padding: 12px;
-            }
-            
-            .message-container {
-                padding: 20px 15px;
-                margin-bottom: 20px;
-                margin-top: 15px;
-            }
-            
-            #frase {
-                font-size: 1.4rem;
-                margin-bottom: 15px;
-            }
-            
-            #mensaje {
-                font-size: 1rem;
-                margin-top: 15px;
-                padding-top: 15px;
-            }
-            
-            .gallery {
-                gap: 10px;
-                margin: 20px 0;
-            }
-            
-            .photo-frame {
-                border-radius: 12px;
-            }
-            
-            .mobile-notification {
-                padding: 20px 15px;
-                width: 85%;
-                top: 15%;
-            }
-            
-            .music-container {
-                margin: 20px 0;
-            }
-            
-            .music-placeholder {
-                padding: 15px;
-            }
-            
-            .play-button {
-                padding: 10px 25px;
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .gallery {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .photo-frame {
-                aspect-ratio: 16/9;
-            }
-            
-            #frase {
-                font-size: 1.3rem;
-            }
-            
-            .mobile-notification {
-                top: 10%;
-                width: 90%;
-            }
-        }
-        
-        /* iPhone notch/padding seguro */
-        @supports (padding: max(0px)) {
-            .main-container {
-                padding-left: max(12px, env(safe-area-inset-left));
-                padding-right: max(12px, env(safe-area-inset-right));
-                padding-bottom: max(20px, env(safe-area-inset-bottom));
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Ti</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Georgia", serif;
+}
+
+body {
+  background: linear-gradient(180deg, #0f0f14, #1a1a24);
+  color: #f5f5f5;
+  overflow-x: hidden;
+}
+
+#loading {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+#mainContainer {
+  display: none;
+  padding: 30px 20px 60px;
+  max-width: 720px;
+  margin: auto;
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+p {
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin: 30px 0;
+}
+
+.gallery img {
+  width: 100%;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 1s ease;
+}
+
+.gallery img.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cierre {
+  margin-top: 40px;
+  text-align: center;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.footer {
+  margin-top: 25px;
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
+</style>
 </head>
 
 <body>
-    <!-- Pantalla de carga con animación de imágenes -->
-    <div id="loadingScreen">
-        <!-- Las imágenes se insertarán aquí -->
-    </div>
-    
-    <!-- Notificación flotante para móvil -->
-    <div id="mobileNotification" class="mobile-notification">
-        <h2 id="notificationText" style="font-size: 1.4rem; margin-bottom: 8px;"></h2>
-        <p id="notificationSubtext" style="font-size: 1rem; color: var(--color4);"></p>
-    </div>
-    
-    <!-- Fullscreen para imágenes -->
-    <div id="imageFullscreen" class="image-fullscreen">
-        <button class="close-fullscreen" onclick="closeFullscreen()">×</button>
-        <img id="fullscreenImg" class="fullscreen-image" src="" alt="">
-    </div>
-    
-    <!-- Contenedor principal -->
-    <div id="mainContainer" class="main-container">
-        <!-- Mensaje principal -->
-        <div class="message-container">
-            <h1 id="frase"></h1>
-            <p id="mensaje"></p>
-        </div>
-        
-        <!-- Galería de imágenes -->
-        <div id="imagenes" class="gallery"></div>
-        
-        <!-- Reproductor de música -->
-        <div class="music-container">
-            <div id="musicPlaceholder" class="music-placeholder">
-                <p style="margin-bottom: 15px; color: var(--color5);">🎵 Una canción para este momento</p>
-                <button class="play-button" onclick="playMusic()">
-                    <span>▶️ Reproducir</span>
-                </button>
-            </div>
-            <iframe id="spotifyPlayer" class="spotify-player" 
-                src=""
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                loading="lazy">
-            </iframe>
-        </div>
-        
-        <!-- Footer -->
-        <footer>
-            Este espacio permanecerá aquí, siempre.<br>
-            <span id="cierre"></span>
-        </footer>
-    </div>
 
-    <script>
-        // Datos que cambian cada vez que se recarga la página
-        const frases = [
-            "No todo lo importante se dice.",
-            "Hoy solo quería que supieras que aquí sigo.",
-            "Algunas cosas se sostienen estando.",
-            "Este lugar existe porque tú importas.",
-            "No siempre hay palabras.",
-            "Pero siempre hay presencia."
-        ];
+<div id="loading">Cargando algo que significa mucho…</div>
 
-        const mensajes = [
-            "Acompañar no siempre es saber qué hacer. A veces es no irse.",
-            "No entraste a mi vida como un momento. Entraste como algo que se acomoda y ya no se va.",
-            "Estuve cuando no era fácil. Y sigo estando.",
-            "Hay personas que cambian el peso de la vida. Tú eres una de ellas.",
-            "El silencio también puede ser compañía.",
-            "A veces, solo estar es suficiente."
-        ];
+<div id="mainContainer">
+  <h1 id="frase"></h1>
 
-        const cierres = [
-            "Aquí sigo.",
-            "Sin ruido.",
-            "Con calma.",
-            "Sin exigencias.",
-            "Presente.",
-            "Contigo."
-        ];
+  <p id="mensaje"></p>
 
-        const notificaciones = [
-            { titulo: "Aquí sigo", subtitulo: "Como siempre, como debe ser." },
-            { titulo: "Presente", subtitulo: "En silencio, pero presente." },
-            { titulo: "Contigo", subtitulo: "Aunque no se note, contigo." },
-            { titulo: "Recordando", subtitulo: "Que lo importante perdura." },
-            { titulo: "Aquí", subtitulo: "Simplemente aquí." }
-        ];
+  <div class="gallery" id="gallery"></div>
 
-        // Generar array de 96 fotos
-        const fotos = Array.from({length: 96}, (_, i) => `fotos/foto${i + 1}.jpg`);
-        
-        // Playlist de Spotify con canciones apropiadas
-        const spotifyTracks = [
-            "4cOdK2wGLETKBW3PvgPWqT", // Aquí sigo - Dani Martín
-            "6habFhsOp2NvshLv26DqMb", // Color Esperanza - Diego Torres
-            "0VjIjW4GlUZAMYd2vXMi3b", // Vivir es ahora - Benny Ibarra
-            "5B3lZ6QqXLYxqR5GJho6f9", // Te necesito - Luis Miguel
-            "4J2P9AqELc4mJ7cNtQ8l7F", // Eres - Café Tacvba
-            "3QlF6mPkY2e3i2Y6Q1wIh1", // Si no te hubieras ido - Marco Antonio Solís
-            "6V1bu7o1GQbR6ZtXKjFjqY"  // Amárrame - Mon Laferte
-        ];
+  <div class="cierre">
+    <p id="cierre"></p>
+    <p class="footer">Este momento no se repetirá igual.</p>
+  </div>
+</div>
 
-        // Variables globales
-        let selectedImages = [];
-        let selectedTrack = '';
-        let musicStarted = false;
+<!-- 🎵 Música -->
+<audio id="bgMusic" preload="auto" loop>
+  <source src="musica/song1.mp3" type="audio/mpeg">
+</audio>
 
-        // Función para seleccionar elementos aleatorios sin repetición
-        function selectUniqueRandom(arr, count) {
-            const shuffled = [...arr].sort(() => Math.random() - 0.5);
-            return shuffled.slice(0, count);
-        }
+<script>
+/* =========================
+   TEXTOS (PERSONALÍZALOS)
+========================= */
+const frases = [
+  "No llegaste a mi vida por casualidad.",
+  "Hay personas que cambian el peso de los días.",
+  "Eres una constante que se volvió hogar."
+];
 
-        // Función para obtener un elemento aleatorio
-        function getRandomElement(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
-        }
+const mensajes = [
+  "He estado contigo en momentos fáciles y en otros que dolían más de lo que se decía en voz alta. No por obligación, sino porque estar contigo siempre tuvo sentido.",
+  "No todo fue simple, pero todo fue real. Y eso es lo que hace que valga.",
+  "Tu presencia no pasó por mi vida: se quedó."
+];
 
-        // Inicializar todas las selecciones (cada vez que se carga la página)
-        function initSelections() {
-            // Seleccionar elementos aleatorios
-            document.getElementById("frase").textContent = getRandomElement(frases);
-            document.getElementById("mensaje").textContent = getRandomElement(mensajes);
-            document.getElementById("cierre").textContent = getRandomElement(cierres);
-            
-            const notification = getRandomElement(notificaciones);
-            document.getElementById("notificationText").textContent = notification.titulo;
-            document.getElementById("notificationSubtext").textContent = notification.subtitulo;
-            
-            // Seleccionar 3 imágenes para la animación
-            selectedImages = selectUniqueRandom(fotos, 3);
-            
-            // Seleccionar una canción aleatoria
-            selectedTrack = getRandomElement(spotifyTracks);
-            
-            console.log("Página recargada - Nuevas selecciones realizadas");
-        }
+const cierres = [
+  "Esto no es un regalo de una fecha. Es un recordatorio permanente.",
+  "No sé qué nos depare el tiempo, pero sí sé lo que significas.",
+  "Si alguna vez dudas, vuelve aquí."
+];
 
-        // Configurar animación de carga
-        function setupLoadingAnimation() {
-            const loadingScreen = document.getElementById('loadingScreen');
-            
-            // Crear elementos de imagen para la animación
-            selectedImages.forEach((imgSrc, index) => {
-                const img = document.createElement('img');
-                img.className = 'loading-image';
-                img.src = imgSrc;
-                img.alt = `Imagen ${index + 1}`;
-                img.onerror = function() {
-                    this.style.display = 'none';
-                };
-                loadingScreen.appendChild(img);
-            });
-            
-            // Ocultar pantalla de carga después de 9 segundos
-            setTimeout(() => {
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                    document.getElementById('mainContainer').style.display = 'block';
-                    
-                    // Ocultar notificación después de 5 segundos
-                    setTimeout(() => {
-                        const notification = document.getElementById('mobileNotification');
-                        notification.style.opacity = '0';
-                        notification.style.transform = 'translate(-50%, -50%) scale(0.9)';
-                        notification.style.transition = 'all 0.5s ease';
-                        
-                        setTimeout(() => {
-                            notification.style.display = 'none';
-                        }, 500);
-                    }, 5000);
-                }, 1000);
-            }, 9000);
-        }
+function getRandomElement(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
-        // Configurar galería de imágenes
-        function setupGallery() {
-            const galleryContainer = document.getElementById('imagenes');
-            galleryContainer.innerHTML = '';
-            
-            // Seleccionar 4 imágenes aleatorias para la galería
-            const galleryImages = selectUniqueRandom(fotos, 6);
-            
-            galleryImages.forEach((imgSrc, index) => {
-                const frame = document.createElement('div');
-                frame.className = 'photo-frame';
-                frame.onclick = () => openFullscreen(imgSrc);
-                
-                const img = document.createElement('img');
-                img.src = imgSrc;
-                img.alt = `Imagen ${index + 1}`;
-                img.loading = "lazy";
-                img.onerror = function() {
-                    this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="%23002448"/><text x="150" y="150" font-family="Arial" font-size="20" fill="white" text-anchor="middle" dy=".3em">Imagen especial</text></svg>';
-                };
-                
-                frame.appendChild(img);
-                galleryContainer.appendChild(frame);
-            });
-        }
+/* =========================
+   GALERÍA AUTOMÁTICA
+========================= */
+fetch("fotos/")
+  .then(r => r.text())
+  .then(html => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    const links = Array.from(div.querySelectorAll("a"))
+      .map(a => a.href)
+      .filter(href => href.match(/\.(jpg|jpeg|png|webp)$/i));
 
-        // Función para abrir imagen en fullscreen
-        function openFullscreen(imgSrc) {
-            const fullscreen = document.getElementById('imageFullscreen');
-            const fullscreenImg = document.getElementById('fullscreenImg');
-            
-            fullscreenImg.src = imgSrc;
-            fullscreen.style.display = 'flex';
-            
-            // Bloquear scroll del body
-            document.body.style.overflow = 'hidden';
-        }
+    links.slice(0, 3).forEach(src => {
+      const img = document.createElement("img");
+      img.src = src;
+      document.getElementById("gallery").appendChild(img);
+    });
 
-        // Función para cerrar fullscreen
-        function closeFullscreen() {
-            const fullscreen = document.getElementById('imageFullscreen');
-            fullscreen.style.display = 'none';
-            
-            // Restaurar scroll del body
-            document.body.style.overflow = 'auto';
-        }
+    observeImages();
+  });
 
-        // Función para reproducir música
-        function playMusic() {
-            if (musicStarted) return;
-            
-            const placeholder = document.getElementById('musicPlaceholder');
-            const player = document.getElementById('spotifyPlayer');
-            
-            // Configurar y mostrar el reproductor de Spotify
-            player.src = `https://open.spotify.com/embed/track/${selectedTrack}?utm_source=generator&theme=0&autoplay=1`;
-            player.style.display = 'block';
-            placeholder.style.display = 'none';
-            
-            musicStarted = true;
-            
-            // Forzar autoplay en móvil después de la interacción del usuario
-            setTimeout(() => {
-                player.contentWindow.postMessage('{"command":"play"}', '*');
-            }, 1000);
-        }
+function observeImages() {
+  const imgs = document.querySelectorAll(".gallery img");
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+      }
+    });
+  }, { threshold: 0.2 });
 
-        // Cerrar fullscreen con tecla ESC o tocando fuera
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeFullscreen();
-            }
-        });
+  imgs.forEach(img => observer.observe(img));
+}
 
-        document.getElementById('imageFullscreen').addEventListener('click', (e) => {
-            if (e.target.id === 'imageFullscreen') {
-                closeFullscreen();
-            }
-        });
+/* =========================
+   LOADING → CONTENIDO
+========================= */
+setTimeout(() => {
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("mainContainer").style.display = "block";
 
-        // Inicializar cuando la página cargue
-        window.addEventListener('load', () => {
-            initSelections();
-            setupLoadingAnimation();
-            setupGallery();
-            
-            // Intentar reproducir música automáticamente después de 10 segundos (si el usuario ha interactuado)
-            setTimeout(() => {
-                if (!musicStarted) {
-                    // Solo intentamos autoplay si el usuario ya ha tocado la pantalla
-                    document.body.addEventListener('touchstart', function tryAutoplay() {
-                        if (!musicStarted) {
-                            playMusic();
-                            document.body.removeEventListener('touchstart', tryAutoplay);
-                        }
-                    }, { once: true });
-                }
-            }, 10000);
-            
-            // Detectar si es iOS para ajustes especiales
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            if (isIOS) {
-                document.body.classList.add('ios-device');
-            }
-        });
+  document.getElementById("frase").textContent = getRandomElement(frases);
+  document.getElementById("mensaje").textContent = getRandomElement(mensajes);
+  document.getElementById("cierre").textContent = getRandomElement(cierres);
+}, 2000);
 
-        // Prevenir zoom no deseado en iOS
-        document.addEventListener('touchstart', function(event) {
-            if (event.touches.length > 1) {
-                event.preventDefault();
-            }
-        }, { passive: false });
+/* =========================
+   MÚSICA ELEGANTE
+========================= */
+const audio = document.getElementById("bgMusic");
+audio.volume = 0;
+let musicUnlocked = false;
 
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function(event) {
-            const now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
-    </script>
+function fadeInMusic() {
+  let vol = 0;
+  audio.play().catch(() => {});
+  const fade = setInterval(() => {
+    if (vol < 0.35) {
+      vol += 0.02;
+      audio.volume = vol;
+    } else {
+      clearInterval(fade);
+    }
+  }, 120);
+}
+
+function unlockAudioOnce() {
+  if (musicUnlocked) return;
+  musicUnlocked = true;
+  fadeInMusic();
+}
+
+["touchstart","click","scroll"].forEach(evt =>
+  document.addEventListener(evt, unlockAudioOnce, { once: true })
+);
+</script>
+
 </body>
 </html>
