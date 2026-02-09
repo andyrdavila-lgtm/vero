@@ -376,17 +376,20 @@
         // Generar array de 96 fotos
         const fotos = Array.from({length: 96}, (_, i) => `fotos/foto${i + 1}.jpg`);
         
-        // Música local - basado en tu estructura de carpeta
-        // Generar array de música dinámicamente (musica1.mp3, musica2.mp3, etc.)
-        const canciones = [];
-        for (let i = 1; i <= 3; i++) {
-            canciones.push({
-                archivo: `musica/musica${i}.mp3`,
-                nombre: `Música ${i}`
-            });
-        }
+        // Lista de canciones POSIBLES (todas las que podrían existir)
+        const cancionesPosibles = [
+            { archivo: 'musica/musica1.mp3', nombre: 'Aquí sigo' },
+            { archivo: 'musica/musica2.mp3', nombre: 'Sin ruido' },
+            { archivo: 'musica/musica3.mp3', nombre: 'Con calma' }
+        ];
+
+        // Canciones de respaldo en línea por si los archivos locales no existen
+        const cancionesRespaldo = [
+            { archivo: 'https://assets.mixkit.co/music/preview/mixkit-driving-ambition-32.mp3', nombre: 'Música alternativa' }
+        ];
 
         // Variables globales
+        let cancionesDisponibles = []; // Se llenará con las canciones que realmente existan
         let musicaActual = null;
         let animacionTerminada = false;
         let autoplayBlocked = false;
@@ -400,6 +403,35 @@
         function selectUniqueRandom(arr, count) {
             const shuffled = [...arr].sort(() => Math.random() - 0.5);
             return shuffled.slice(0, count);
+        }
+
+        // Función para verificar qué archivos de música existen realmente
+        async function verificarArchivosMusica() {
+            const cancionesValidas = [];
+            
+            // Verificar cada archivo local
+            for (const cancion of cancionesPosibles) {
+                try {
+                    // Intentar cargar el archivo
+                    const response = await fetch(cancion.archivo, { method: 'HEAD' });
+                    if (response.ok) {
+                        cancionesValidas.push(cancion);
+                        console.log(`✅ ${cancion.archivo} existe`);
+                    } else {
+                        console.log(`❌ ${cancion.archivo} no existe (${response.status})`);
+                    }
+                } catch (error) {
+                    console.log(`❌ ${cancion.archivo} no se pudo cargar`);
+                }
+            }
+            
+            // Si no hay canciones locales válidas, usar las de respaldo
+            if (cancionesValidas.length === 0) {
+                console.log("No se encontraron archivos de música locales, usando respaldo en línea");
+                return cancionesRespaldo;
+            }
+            
+            return cancionesValidas;
         }
 
         // Configurar animación de imágenes a pantalla completa
@@ -436,43 +468,74 @@
         }
 
         // Inicializar contenido
-        function initContenido() {
+        async function initContenido() {
+            // Verificar qué archivos de música existen
+            cancionesDisponibles = await verificarArchivosMusica();
+            
+            if (cancionesDisponibles.length === 0) {
+                console.error("No hay archivos de música disponibles");
+                return;
+            }
+            
             // Seleccionar mensaje único aleatorio
             document.getElementById("unicoMensaje").textContent = getRandomElement(mensajesUnicos);
             
             // Seleccionar firma aleatoria
             document.getElementById("firma").textContent = getRandomElement(firmas);
             
-            // Seleccionar música aleatoria
-            musicaActual = getRandomElement(canciones);
+            // Seleccionar música aleatoria de las disponibles
+            musicaActual = getRandomElement(cancionesDisponibles);
             const audioElement = document.getElementById('backgroundMusic');
             
             // Establecer fuente de audio
             audioElement.src = musicaActual.archivo;
-            
-            // Intentar autoplay inmediatamente (puede ser bloqueado por el navegador)
-            audioElement.play().then(() => {
-                console.log("Música iniciada automáticamente al cargar");
-                // Actualizar info de la canción
-                document.getElementById('songInfo').textContent = `🎵 ${musicaActual.nombre}`;
-            }).catch(error => {
-                console.log("Autoplay bloqueado por el navegador:", error);
-                autoplayBlocked = true;
-                
-                // Mostrar controles de audio
-                document.querySelector('.audio-section').style.display = 'block';
-                document.getElementById('songInfo').textContent = 
-                    'La música no pudo iniciar automáticamente. Toca el botón para reproducir.';
-                document.getElementById('songInfo').style.color = '#ff6b6b';
-            });
             
             // Configurar galería
             setupGaleria();
             
             console.log("Contenido inicializado con:", {
                 mensaje: document.getElementById("unicoMensaje").textContent,
-                cancion: musicaActual.nombre
+                cancion: musicaActual.nombre,
+                archivo: musicaActual.archivo,
+                totalCancionesDisponibles: cancionesDisponibles.length
             });
+            
+            // Mostrar info de la canción
+            document.getElementById('songInfo').textContent = `🎵 ${musicaActual.nombre}`;
+        }
+
+        // Intentar reproducir música después de la animación
+        async function intentarReproducirMusica() {
+            const audioElement = document.getElementById('backgroundMusic');
+            const songInfo = document.getElementById('songInfo');
+            
+            if (cancionesDisponibles.length === 0) {
+                songInfo.textContent = 'No se encontraron archivos de música.';
+                songInfo.style.color = '#ff6b6b';
+                document.querySelector('.audio-section').style.display = 'block';
+                document.getElementById('audioButton').style.display = 'none';
+                return;
+            }
+            
+            try {
+                // Intentar autoplay
+                await audioElement.play();
+                console.log("Música iniciada automáticamente al cargar:", musicaActual.nombre);
+                
+                // Actualizar info de la canción
+                songInfo.textContent = `🎵 ${musicaActual.nombre}`;
+                songInfo.style.color = '';
+                
+            } catch (error) {
+                console.log("Autoplay bloqueado por el navegador:", error);
+                autoplayBlocked = true;
+                
+                // Mostrar controles de audio
+                document.querySelector('.audio-section').style.display = 'block';
+                songInfo.textContent = 
+                    'La música no pudo iniciar automáticamente. Toca el botón para reproducir.';
+                songInfo.style.color = '#ff6b6b';
+            }
         }
 
         // Configurar galería de imágenes
@@ -554,15 +617,49 @@
         function setupAudioHandlers() {
             const audioElement = document.getElementById('backgroundMusic');
             const songInfo = document.getElementById('songInfo');
+            const audioSection = document.querySelector('.audio-section');
             
             // Manejar error de carga de audio
             audioElement.addEventListener('error', (e) => {
-                console.error("Error cargando audio:", e);
+                console.error("Error cargando audio:", audioElement.error);
+                
+                // Si hay error con esta canción, intentar con otra si hay disponibles
+                if (cancionesDisponibles.length > 1) {
+                    // Remover la canción problemática de la lista
+                    const currentIndex = cancionesDisponibles.findIndex(c => c.archivo === musicaActual.archivo);
+                    if (currentIndex > -1) {
+                        cancionesDisponibles.splice(currentIndex, 1);
+                    }
+                    
+                    // Intentar con otra canción si quedan
+                    if (cancionesDisponibles.length > 0) {
+                        musicaActual = getRandomElement(cancionesDisponibles);
+                        audioElement.src = musicaActual.archivo;
+                        audioElement.load();
+                        
+                        // Actualizar info
+                        songInfo.textContent = `Intentando: ${musicaActual.nombre}...`;
+                        
+                        // Intentar reproducir de nuevo después de un breve delay
+                        setTimeout(() => {
+                            audioElement.play().catch(err => {
+                                console.log("Todavía no se puede reproducir:", err);
+                                songInfo.textContent = 'Toca el botón para reproducir.';
+                                songInfo.style.color = '#ff6b6b';
+                                audioSection.style.display = 'block';
+                            });
+                        }, 1000);
+                        
+                        return;
+                    }
+                }
+                
+                // Si no hay más canciones
                 songInfo.textContent = 'Error cargando la música. Verifica los archivos en la carpeta "musica".';
                 songInfo.style.color = '#ff6b6b';
                 
                 // Mostrar controles
-                document.querySelector('.audio-section').style.display = 'block';
+                audioSection.style.display = 'block';
                 document.getElementById('audioButton').style.display = 'none';
             });
             
@@ -593,9 +690,9 @@
         }
 
         // Inicializar cuando la página cargue
-        window.addEventListener('load', () => {
-            // Inicializar contenido
-            initContenido();
+        window.addEventListener('load', async () => {
+            // Inicializar contenido (verifica archivos primero)
+            await initContenido();
             
             // Configurar animación
             setupAnimacion();
@@ -603,8 +700,15 @@
             // Configurar manejadores de audio
             setupAudioHandlers();
             
+            // Intentar reproducir música después de un breve delay
+            setTimeout(intentarReproducirMusica, 500);
+            
             // Si el usuario interactúa y el autoplay estaba bloqueado, intentar reproducir
             document.addEventListener('click', function intentarReproducir() {
+                if (autoplayBlocked && !document.getElementById('backgroundMusic').paused) {
+                    return;
+                }
+                
                 if (autoplayBlocked) {
                     const audioElement = document.getElementById('backgroundMusic');
                     audioElement.play().then(() => {
