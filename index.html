@@ -185,10 +185,11 @@
             justify-content: center;
         }
         
-        /* Controles de audio */
+        /* Controles de audio - Ocultos por defecto ya que la música inicia automática */
         .audio-section {
             margin: 40px 0;
             text-align: center;
+            display: none; /* Oculto inicialmente */
         }
         
         .audio-button {
@@ -232,6 +233,12 @@
             color: var(--color3);
             font-style: italic;
             opacity: 0.9;
+        }
+        
+        /* Estado de error de audio */
+        .audio-error .song-info {
+            color: #ff6b6b;
+            font-weight: 500;
         }
         
         /* Animaciones */
@@ -326,11 +333,11 @@
         <!-- Galería de imágenes -->
         <div id="imagenes" class="gallery"></div>
         
-        <!-- Sección de audio -->
+        <!-- Sección de audio - Solo visible si hay error -->
         <div class="audio-section">
             <button id="audioButton" class="audio-button" onclick="toggleAudio()">
                 <span id="playIcon">▶️</span>
-                <span>Iniciar música</span>
+                <span id="audioButtonText">Iniciar música</span>
             </button>
             <div class="song-info" id="songInfo"></div>
         </div>
@@ -341,13 +348,13 @@
         </footer>
     </div>
     
-    <!-- Elemento de audio oculto -->
-    <audio id="backgroundMusic" loop>
+    <!-- Elemento de audio oculto, intentará autoplay -->
+    <audio id="backgroundMusic" loop autoplay>
         <!-- La fuente se establecerá dinámicamente -->
     </audio>
 
     <script>
-        // Un solo mensaje (no dos como antes)
+        // Un solo mensaje
         const mensajesUnicos = [
             "Aquí sigo. Sin ruido, con calma.",
             "No todo lo importante se dice.",
@@ -371,16 +378,18 @@
         
         // Música local - basado en tu estructura de carpeta
         // Generar array de música dinámicamente (musica1.mp3, musica2.mp3, etc.)
-        // Puedes agregar más archivos según necesites
-        const canciones = Array.from({length: 10}, (_, i) => ({
-            archivo: `musica/musica${i + 1}.mp3`,
-            nombre: `Canción ${i + 1}`
-        })).filter((_, i) => i < 5); // Limitar a 5 canciones por ahora
+        const canciones = [];
+        for (let i = 1; i <= 10; i++) {
+            canciones.push({
+                archivo: `musica/musica${i}.mp3`,
+                nombre: `Música ${i}`
+            });
+        }
 
         // Variables globales
-        let audioIniciado = false;
         let musicaActual = null;
         let animacionTerminada = false;
+        let autoplayBlocked = false;
 
         // Función para obtener un elemento aleatorio
         function getRandomElement(arr) {
@@ -422,11 +431,6 @@
                     animationContainer.style.display = 'none';
                     document.getElementById('mainContainer').style.display = 'block';
                     animacionTerminada = true;
-                    
-                    // Si el usuario ya tocó la pantalla, iniciar música automáticamente
-                    if (window.userHasInteracted) {
-                        iniciarMusicaAutomaticamente();
-                    }
                 }, 1000);
             }, 12000);
         }
@@ -442,10 +446,25 @@
             // Seleccionar música aleatoria
             musicaActual = getRandomElement(canciones);
             const audioElement = document.getElementById('backgroundMusic');
+            
+            // Establecer fuente de audio
             audioElement.src = musicaActual.archivo;
             
-            // Actualizar info de la canción
-            document.getElementById('songInfo').textContent = `🎵 ${musicaActual.nombre}`;
+            // Intentar autoplay inmediatamente (puede ser bloqueado por el navegador)
+            audioElement.play().then(() => {
+                console.log("Música iniciada automáticamente al cargar");
+                // Actualizar info de la canción
+                document.getElementById('songInfo').textContent = `🎵 ${musicaActual.nombre}`;
+            }).catch(error => {
+                console.log("Autoplay bloqueado por el navegador:", error);
+                autoplayBlocked = true;
+                
+                // Mostrar controles de audio
+                document.querySelector('.audio-section').style.display = 'block';
+                document.getElementById('songInfo').textContent = 
+                    'La música no pudo iniciar automáticamente. Toca el botón para reproducir.';
+                document.getElementById('songInfo').style.color = '#ff6b6b';
+            });
             
             // Configurar galería
             setupGaleria();
@@ -483,38 +502,29 @@
             });
         }
 
-        // Función para iniciar música automáticamente
-        function iniciarMusicaAutomaticamente() {
-            if (audioIniciado) return;
-            
-            const audioElement = document.getElementById('backgroundMusic');
-            const playButton = document.getElementById('audioButton');
-            
-            audioElement.play().then(() => {
-                console.log("Música iniciada automáticamente");
-                audioIniciado = true;
-                playButton.innerHTML = '<span>⏸️</span><span>Pausar música</span>';
-            }).catch(error => {
-                console.log("Error al iniciar música automáticamente:", error);
-                // Mostrar mensaje para que el usuario toque el botón
-                document.getElementById('songInfo').innerHTML = 
-                    'Toca el botón para iniciar la música';
-            });
-        }
-
-        // Alternar reproducción de audio
+        // Alternar reproducción de audio (solo si autoplay fue bloqueado)
         function toggleAudio() {
             const audioElement = document.getElementById('backgroundMusic');
-            const playButton = document.getElementById('audioButton');
+            const audioButton = document.getElementById('audioButton');
+            const audioButtonText = document.getElementById('audioButtonText');
+            const songInfo = document.getElementById('songInfo');
             
             if (audioElement.paused) {
-                audioElement.play();
-                audioIniciado = true;
-                playButton.innerHTML = '<span>⏸️</span><span>Pausar música</span>';
-                console.log("Música iniciada manualmente");
+                audioElement.play().then(() => {
+                    audioButtonText.textContent = 'Pausar música';
+                    document.getElementById('playIcon').textContent = '⏸️';
+                    songInfo.textContent = `🎵 ${musicaActual.nombre}`;
+                    songInfo.style.color = '';
+                    console.log("Música iniciada manualmente");
+                }).catch(error => {
+                    console.error("Error al iniciar música:", error);
+                    songInfo.textContent = 'Error al reproducir la música. Intenta de nuevo.';
+                    songInfo.style.color = '#ff6b6b';
+                });
             } else {
                 audioElement.pause();
-                playButton.innerHTML = '<span>▶️</span><span>Reanudar música</span>';
+                audioButtonText.textContent = 'Reanudar música';
+                document.getElementById('playIcon').textContent = '▶️';
                 console.log("Música pausada");
             }
         }
@@ -540,26 +550,45 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Configurar interacción del usuario
-        function setupInteraccion() {
-            // Marcar cuando el usuario interactúa por primera vez
-            const marcarInteraccion = () => {
-                if (!window.userHasInteracted) {
-                    window.userHasInteracted = true;
-                    console.log("Usuario interactuó por primera vez");
-                    
-                    // Si la animación ya terminó, iniciar música automáticamente
-                    if (animacionTerminada) {
-                        iniciarMusicaAutomaticamente();
-                    }
+        // Configurar manejo de errores de audio
+        function setupAudioHandlers() {
+            const audioElement = document.getElementById('backgroundMusic');
+            const songInfo = document.getElementById('songInfo');
+            
+            // Manejar error de carga de audio
+            audioElement.addEventListener('error', (e) => {
+                console.error("Error cargando audio:", e);
+                songInfo.textContent = 'Error cargando la música. Verifica los archivos en la carpeta "musica".';
+                songInfo.style.color = '#ff6b6b';
+                
+                // Mostrar controles
+                document.querySelector('.audio-section').style.display = 'block';
+                document.getElementById('audioButton').style.display = 'none';
+            });
+            
+            // Cuando la música se reproduce exitosamente
+            audioElement.addEventListener('play', () => {
+                songInfo.textContent = `🎵 ${musicaActual.nombre}`;
+                songInfo.style.color = '';
+                
+                // Si autoplay fue bloqueado pero ahora se reproduce, actualizar botón
+                if (autoplayBlocked) {
+                    document.getElementById('audioButtonText').textContent = 'Pausar música';
+                    document.getElementById('playIcon').textContent = '⏸️';
                 }
-            };
+            });
             
-            // Capturar cualquier interacción del usuario
-            const eventos = ['click', 'touchstart', 'touchmove', 'touchend', 'scroll'];
+            // Cuando la música se pausa
+            audioElement.addEventListener('pause', () => {
+                if (autoplayBlocked) {
+                    document.getElementById('audioButtonText').textContent = 'Reanudar música';
+                    document.getElementById('playIcon').textContent = '▶️';
+                }
+            });
             
-            eventos.forEach(evento => {
-                document.addEventListener(evento, marcarInteraccion, { once: false });
+            // Cuando la música termina (loop debería reiniciar)
+            audioElement.addEventListener('ended', () => {
+                console.log("Música terminada (loop activado)");
             });
         }
 
@@ -571,33 +600,21 @@
             // Configurar animación
             setupAnimacion();
             
-            // Configurar interacción
-            setupInteraccion();
+            // Configurar manejadores de audio
+            setupAudioHandlers();
             
-            // Configurar audio para manejar errores
-            const audioElement = document.getElementById('backgroundMusic');
-            audioElement.addEventListener('error', (e) => {
-                console.error("Error cargando audio:", e);
-                document.getElementById('songInfo').innerHTML = 
-                    'Error cargando la música. Verifica los archivos en la carpeta "musica".';
-                document.getElementById('audioButton').style.display = 'none';
-            });
-            
-            // Cuando la música termine, mostrar mensaje
-            audioElement.addEventListener('ended', () => {
-                console.log("Música terminada");
-            });
-            
-            // Cuando la música se pause, actualizar botón
-            audioElement.addEventListener('pause', () => {
-                document.getElementById('audioButton').innerHTML = 
-                    '<span>▶️</span><span>Reanudar música</span>';
-            });
-            
-            audioElement.addEventListener('play', () => {
-                document.getElementById('audioButton').innerHTML = 
-                    '<span>⏸️</span><span>Pausar música</span>';
-            });
+            // Si el usuario interactúa y el autoplay estaba bloqueado, intentar reproducir
+            document.addEventListener('click', function intentarReproducir() {
+                if (autoplayBlocked) {
+                    const audioElement = document.getElementById('backgroundMusic');
+                    audioElement.play().then(() => {
+                        autoplayBlocked = false;
+                        document.querySelector('.audio-section').style.display = 'none';
+                    }).catch(e => {
+                        console.log("Aún no se puede reproducir:", e);
+                    });
+                }
+            }, { once: true });
         });
 
         // Cerrar fullscreen con tecla ESC
