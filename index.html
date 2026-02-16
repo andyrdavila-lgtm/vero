@@ -37,7 +37,7 @@
             touch-action: manipulation;
         }
         
-        /* PANTALLA DE CARGA CON CRONÓMETRO REGRESIVO */
+        /* PANTALLA DE CARGA CON CRONÓMETRO REGRESIVO Y PASSWORD */
         #loadingScreen {
             position: fixed;
             top: 0;
@@ -52,6 +52,7 @@
             align-items: center;
             text-align: center;
             padding: 20px;
+            overflow-y: auto;
         }
         
         .loading-content {
@@ -143,6 +144,79 @@
         .date-display span {
             color: var(--dorado2);
             font-weight: 600;
+        }
+        
+        /* SECCIÓN DE CLAVE DE ACCESO */
+        .password-section {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0 30px;
+            border: 1px solid var(--color3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .password-title {
+            font-size: 1.3rem;
+            color: var(--color5);
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+        
+        .password-input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .password-input {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid var(--color3);
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            color: white;
+            text-align: center;
+            width: 150px;
+            outline: none;
+            font-family: monospace;
+            letter-spacing: 4px;
+        }
+        
+        .password-input:focus {
+            border-color: var(--dorado2);
+            box-shadow: 0 0 15px rgba(255,215,0,0.3);
+        }
+        
+        .password-button {
+            background: var(--color3);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .password-button:active {
+            transform: scale(0.95);
+            background: var(--color2);
+        }
+        
+        .password-button:hover {
+            border-color: var(--dorado2);
+        }
+        
+        .password-error {
+            color: #ff6b6b;
+            margin-top: 15px;
+            font-size: 1rem;
+            min-height: 24px;
+            font-weight: 500;
         }
         
         /* Animación de imágenes a pantalla completa */
@@ -360,11 +434,11 @@
             justify-content: center;
         }
         
-        /* Controles de audio - Ocultos por defecto ya que la música inicia automática */
+        /* Controles de audio */
         .audio-section {
             margin: 40px 0;
             text-align: center;
-            display: none; /* Oculto inicialmente */
+            display: none;
         }
         
         .audio-button {
@@ -490,6 +564,17 @@
             .time-value {
                 font-size: 1.5rem;
             }
+            
+            .password-input {
+                width: 130px;
+                padding: 12px 20px;
+                font-size: 1.1rem;
+            }
+            
+            .password-button {
+                padding: 12px 25px;
+                font-size: 1.1rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -566,7 +651,7 @@
 </head>
 
 <body>
-    <!-- Pantalla de carga con cronómetro regresivo -->
+    <!-- Pantalla de carga con cronómetro regresivo y clave -->
     <div id="loadingScreen">
         <div class="loading-content">
             <h1 class="loading-title pulse">Aquí sigo</h1>
@@ -607,7 +692,17 @@
                 </div>
             </div>
             
-            <div class="date-display" style="margin-top: 20px; border-left-color: var(--rojo3);">
+            <!-- SECCIÓN DE CLAVE -->
+            <div class="password-section">
+                <div class="password-title">🔐 Acceso anticipado con clave</div>
+                <div class="password-input-group">
+                    <input type="password" id="passwordInput" class="password-input" placeholder="Clave" maxlength="4" inputmode="numeric" pattern="\d*">
+                    <button id="passwordButton" class="password-button">Acceder</button>
+                </div>
+                <div id="passwordError" class="password-error"></div>
+            </div>
+            
+            <div class="date-display" style="margin-top: 10px; border-left-color: var(--rojo3);">
                 Llevamos: <span id="elapsed-preview">Calculando...</span>
             </div>
         </div>
@@ -674,7 +769,7 @@
         <!-- Galería de imágenes -->
         <div id="imagenes" class="gallery"></div>
         
-        <!-- Sección de audio - Solo visible si hay error -->
+        <!-- Sección de audio -->
         <div class="audio-section">
             <button id="audioButton" class="audio-button" onclick="toggleAudio()">
                 <span id="playIcon">▶️</span>
@@ -689,8 +784,8 @@
         </footer>
     </div>
     
-    <!-- Elemento de audio oculto, intentará autoplay -->
-    <audio id="backgroundMusic" loop autoplay>
+    <!-- Elemento de audio oculto -->
+    <audio id="backgroundMusic" loop>
         <!-- La fuente se establecerá dinámicamente -->
     </audio>
 
@@ -787,8 +882,8 @@
                 const ahora = new Date();
                 const diferencia = FECHA_DISPONIBILIDAD - ahora;
                 
-                if (diferencia <= 0) {
-                    // ¡La fecha ya pasó! Mostrar el contenido
+                // Si la fecha ya pasó, mostramos contenido automáticamente (solo si no se ha accedido por clave)
+                if (diferencia <= 0 && !window.accesoAnticipado) {
                     clearInterval(countdownInterval);
                     mostrarContenido();
                     return;
@@ -856,8 +951,11 @@
             elapsedInterval = setInterval(actualizarTiempoTranscurrido, 1000);
         }
 
-        // Mostrar contenido principal (cuando ya pasó el 14 de febrero de 2026)
+        // Mostrar contenido principal (después de clave o fecha cumplida)
         function mostrarContenido() {
+            // Limpiar intervalos
+            if (countdownInterval) clearInterval(countdownInterval);
+            
             const loadingScreen = document.getElementById('loadingScreen');
             
             // Ocultar pantalla de carga con animación
@@ -870,6 +968,23 @@
                 // Mostrar animación de imágenes
                 setupAnimacion();
             }, 1000);
+        }
+
+        // Función para acceder con clave (desde el botón)
+        function accederConClave() {
+            const passwordInput = document.getElementById('passwordInput');
+            const errorDiv = document.getElementById('passwordError');
+            const clave = passwordInput.value.trim();
+            
+            if (clave === '2204') {
+                errorDiv.textContent = ''; // Limpiar error
+                window.accesoAnticipado = true; // Bandera para evitar que el countdown automático interfiera
+                mostrarContenido();
+            } else {
+                errorDiv.textContent = '❌ Clave incorrecta. Intenta de nuevo.';
+                passwordInput.value = ''; // Limpiar para nuevo intento
+                passwordInput.focus();
+            }
         }
 
         // Configurar animación de imágenes a pantalla completa
@@ -1007,17 +1122,17 @@
             });
         }
 
-        // Alternar reproducción de audio (solo si autoplay fue bloqueado)
+        // Alternar reproducción de audio
         function toggleAudio() {
             const audioElement = document.getElementById('backgroundMusic');
-            const audioButton = document.getElementById('audioButton');
             const audioButtonText = document.getElementById('audioButtonText');
+            const playIcon = document.getElementById('playIcon');
             const songInfo = document.getElementById('songInfo');
             
             if (audioElement.paused) {
                 audioElement.play().then(() => {
                     audioButtonText.textContent = 'Pausar música';
-                    document.getElementById('playIcon').textContent = '⏸️';
+                    playIcon.textContent = '⏸️';
                     songInfo.textContent = `🎵 ${musicaActual.nombre}`;
                     songInfo.style.color = '';
                     console.log("Música iniciada manualmente");
@@ -1029,7 +1144,7 @@
             } else {
                 audioElement.pause();
                 audioButtonText.textContent = 'Reanudar música';
-                document.getElementById('playIcon').textContent = '▶️';
+                playIcon.textContent = '▶️';
                 console.log("Música pausada");
             }
         }
@@ -1136,16 +1251,25 @@
             // Iniciar cronómetro de tiempo transcurrido (siempre)
             iniciarTiempoTranscurrido();
             
+            // Configurar evento para botón de clave
+            document.getElementById('passwordButton').addEventListener('click', accederConClave);
+            document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') accederConClave();
+            });
+            
             // Verificar si ya pasó la fecha de disponibilidad
             const ahora = new Date();
             if (ahora >= FECHA_DISPONIBILIDAD) {
-                // Si ya pasó la fecha, mostrar contenido directamente
+                // Si ya pasó la fecha, mostrar contenido directamente (sin clave)
                 mostrarContenido();
                 await initContenido();
                 setupAudioHandlers();
             } else {
-                // Si aún no pasa la fecha, mostrar pantalla de carga con countdown
+                // Si aún no pasa la fecha, mostrar pantalla de carga con countdown y clave
                 iniciarCountdown();
+                // Inicializar el contenido en segundo plano para que esté listo cuando accedan
+                await initContenido();
+                setupAudioHandlers();
             }
             
             // Si el usuario interactúa y el autoplay estaba bloqueado, intentar reproducir
