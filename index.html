@@ -228,7 +228,7 @@
             height: 100%;
             background: #000;
             z-index: 3000;
-            display: none; /* Oculto hasta que pase la pantalla de carga */
+            display: none;
             justify-content: center;
             align-items: center;
         }
@@ -651,14 +651,14 @@
 </head>
 
 <body>
-    <!-- Pantalla de carga con cronómetro regresivo y clave -->
+    <!-- Pantalla de carga con cronómetro regresivo y clave (siempre visible hasta clave correcta) -->
     <div id="loadingScreen">
         <div class="loading-content">
             <h1 class="loading-title pulse">Aquí sigo</h1>
-            <p class="loading-subtitle">Un espacio especial disponible próximamente</p>
+            <p class="loading-subtitle">Un espacio especial protegido</p>
             
             <div class="countdown-container">
-                <div class="countdown-title">Disponible en:</div>
+                <div class="countdown-title">Tiempo restante para la fecha simbólica:</div>
                 <div class="countdown-display">
                     <div class="countdown-unit">
                         <div id="countdown-days" class="countdown-value">00</div>
@@ -688,13 +688,13 @@
                 </div>
                 
                 <div class="date-display">
-                    Fecha de disponibilidad: <span>14 de Febrero de 2026</span>
+                    Fecha de disponibilidad pública: <span>14 de Febrero de 2026</span>
                 </div>
             </div>
             
-            <!-- SECCIÓN DE CLAVE -->
+            <!-- SECCIÓN DE CLAVE (obligatoria) -->
             <div class="password-section">
-                <div class="password-title">🔐 Acceso anticipado con clave</div>
+                <div class="password-title">🔐 Ingresa la clave para acceder</div>
                 <div class="password-input-group">
                     <input type="password" id="passwordInput" class="password-input" placeholder="Clave" maxlength="4" inputmode="numeric" pattern="\d*">
                     <button id="passwordButton" class="password-button">Acceder</button>
@@ -792,9 +792,9 @@
     <script>
         // Fechas importantes
         const FECHA_INICIO = new Date('2024-08-22T20:00:00'); // 22 de agosto de 2024, 8:00 PM
-        const FECHA_DISPONIBILIDAD = new Date('2026-02-14T00:00:00'); // 14 de febrero de 2026, 12:00 AM
+        const FECHA_DISPONIBILIDAD = new Date('2026-02-14T00:00:00'); // 14 de febrero de 2026 (solo informativa)
         
-        // Un solo mensaje
+        // Mensajes
         const mensajesUnicos = [
             "Aquí sigo. Sin ruido, con calma.",
             "No todo lo importante se dice.",
@@ -816,7 +816,7 @@
         // Generar array de 96 fotos
         const fotos = Array.from({length: 96}, (_, i) => `fotos/foto${i + 1}.jpg`);
         
-        // Lista de canciones POSIBLES (todas las que podrían existir)
+        // Lista de canciones POSIBLES
         const cancionesPosibles = [
             { archivo: 'musica/musica1.mp3', nombre: 'Aquí sigo' },
             { archivo: 'musica/musica2.mp3', nombre: 'Sin ruido' },
@@ -829,12 +829,13 @@
         ];
 
         // Variables globales
-        let cancionesDisponibles = []; // Se llenará con las canciones que realmente existan
+        let cancionesDisponibles = [];
         let musicaActual = null;
         let animacionTerminada = false;
         let autoplayBlocked = false;
         let countdownInterval = null;
         let elapsedInterval = null;
+        let contenidoInicializado = false;
 
         // Función para obtener un elemento aleatorio
         function getRandomElement(arr) {
@@ -851,10 +852,8 @@
         async function verificarArchivosMusica() {
             const cancionesValidas = [];
             
-            // Verificar cada archivo local
             for (const cancion of cancionesPosibles) {
                 try {
-                    // Intentar cargar el archivo
                     const response = await fetch(cancion.archivo, { method: 'HEAD' });
                     if (response.ok) {
                         cancionesValidas.push(cancion);
@@ -867,7 +866,6 @@
                 }
             }
             
-            // Si no hay canciones locales válidas, usar las de respaldo
             if (cancionesValidas.length === 0) {
                 console.log("No se encontraron archivos de música locales, usando respaldo en línea");
                 return cancionesRespaldo;
@@ -876,54 +874,49 @@
             return cancionesValidas;
         }
 
-        // CRONÓMETRO REGRESIVO hasta el 14 de febrero de 2026
+        // CRONÓMETRO REGRESIVO (solo informativo)
         function iniciarCountdown() {
             function actualizarCountdown() {
                 const ahora = new Date();
                 const diferencia = FECHA_DISPONIBILIDAD - ahora;
                 
-                // Si la fecha ya pasó, mostramos contenido automáticamente (solo si no se ha accedido por clave)
-                if (diferencia <= 0 && !window.accesoAnticipado) {
-                    clearInterval(countdownInterval);
-                    mostrarContenido();
+                if (diferencia <= 0) {
+                    document.getElementById('countdown-days').textContent = '00';
+                    document.getElementById('countdown-hours').textContent = '00';
+                    document.getElementById('countdown-minutes').textContent = '00';
+                    document.getElementById('countdown-seconds').textContent = '00';
                     return;
                 }
                 
-                // Calcular días, horas, minutos, segundos
                 const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
                 const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
                 const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
                 
-                // Actualizar display
                 document.getElementById('countdown-days').textContent = dias.toString().padStart(2, '0');
                 document.getElementById('countdown-hours').textContent = horas.toString().padStart(2, '0');
                 document.getElementById('countdown-minutes').textContent = minutos.toString().padStart(2, '0');
                 document.getElementById('countdown-seconds').textContent = segundos.toString().padStart(2, '0');
             }
             
-            // Actualizar inmediatamente y luego cada segundo
             actualizarCountdown();
             countdownInterval = setInterval(actualizarCountdown, 1000);
         }
 
-        // CRONÓMETRO PROGRESIVO desde el 22 de agosto de 2024, 8:00 PM
+        // CRONÓMETRO PROGRESIVO desde el 22 de agosto de 2024
         function iniciarTiempoTranscurrido() {
             function actualizarTiempoTranscurrido() {
                 const ahora = new Date();
                 const diferencia = ahora - FECHA_INICIO;
                 
-                // Calcular años, meses, días, horas, minutos, segundos
                 const segundosTotales = Math.floor(diferencia / 1000);
                 const minutosTotales = Math.floor(segundosTotales / 60);
                 const horasTotales = Math.floor(minutosTotales / 60);
                 const diasTotales = Math.floor(horasTotales / 24);
                 
-                // Calcular años (aproximado)
                 const años = Math.floor(diasTotales / 365.25);
                 const diasRestantes = diasTotales - (años * 365.25);
                 
-                // Calcular meses (aproximado)
                 const meses = Math.floor(diasRestantes / 30.44);
                 const dias = Math.floor(diasRestantes - (meses * 30.44));
                 
@@ -931,7 +924,6 @@
                 const minutos = minutosTotales % 60;
                 const segundos = segundosTotales % 60;
                 
-                // Actualizar display principal
                 document.getElementById('elapsed-years').textContent = años;
                 document.getElementById('elapsed-months').textContent = meses;
                 document.getElementById('elapsed-days').textContent = dias;
@@ -939,50 +931,44 @@
                 document.getElementById('elapsed-minutes').textContent = minutos.toString().padStart(2, '0');
                 document.getElementById('elapsed-seconds').textContent = segundos.toString().padStart(2, '0');
                 
-                // Actualizar preview en pantalla de carga
                 const previewElement = document.getElementById('elapsed-preview');
                 if (previewElement) {
                     previewElement.textContent = `${años} años, ${meses} meses, ${dias} días, ${horas} horas, ${minutos} minutos, ${segundos} segundos`;
                 }
             }
             
-            // Actualizar inmediatamente y luego cada segundo
             actualizarTiempoTranscurrido();
             elapsedInterval = setInterval(actualizarTiempoTranscurrido, 1000);
         }
 
-        // Mostrar contenido principal (después de clave o fecha cumplida)
+        // Mostrar contenido principal (solo se llama si la clave es correcta)
         function mostrarContenido() {
             // Limpiar intervalos
             if (countdownInterval) clearInterval(countdownInterval);
             
             const loadingScreen = document.getElementById('loadingScreen');
             
-            // Ocultar pantalla de carga con animación
             loadingScreen.style.opacity = '0';
             loadingScreen.style.transition = 'opacity 1s ease';
             
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
-                
-                // Mostrar animación de imágenes
                 setupAnimacion();
             }, 1000);
         }
 
-        // Función para acceder con clave (desde el botón)
+        // Función para acceder con clave
         function accederConClave() {
             const passwordInput = document.getElementById('passwordInput');
             const errorDiv = document.getElementById('passwordError');
             const clave = passwordInput.value.trim();
             
             if (clave === '2204') {
-                errorDiv.textContent = ''; // Limpiar error
-                window.accesoAnticipado = true; // Bandera para evitar que el countdown automático interfiera
+                errorDiv.textContent = ''; 
                 mostrarContenido();
             } else {
                 errorDiv.textContent = '❌ Clave incorrecta. Intenta de nuevo.';
-                passwordInput.value = ''; // Limpiar para nuevo intento
+                passwordInput.value = '';
                 passwordInput.focus();
             }
         }
@@ -992,23 +978,19 @@
             const animationContainer = document.getElementById('fullscreenAnimation');
             animationContainer.style.display = 'flex';
             
-            // Seleccionar 3 imágenes aleatorias para la animación
             const animationImages = selectUniqueRandom(fotos, 3);
             
-            // Crear elementos de imagen para la animación
             animationImages.forEach((imgSrc, index) => {
                 const img = document.createElement('img');
                 img.className = 'animation-image';
                 img.src = imgSrc;
                 img.alt = `Imagen ${index + 1}`;
                 img.onerror = function() {
-                    // Si una imagen no carga, usar una de respaldo
                     this.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop';
                 };
                 animationContainer.appendChild(img);
             });
             
-            // Después de 12 segundos, ocultar animación y mostrar contenido
             setTimeout(() => {
                 animationContainer.style.opacity = '0';
                 animationContainer.style.transition = 'opacity 1s ease';
@@ -1018,15 +1000,15 @@
                     document.getElementById('mainContainer').style.display = 'block';
                     animacionTerminada = true;
                     
-                    // Intentar reproducir música
                     intentarReproducirMusica();
                 }, 1000);
             }, 12000);
         }
 
-        // Inicializar contenido
+        // Inicializar contenido (preparar música, mensajes, galería)
         async function initContenido() {
-            // Verificar qué archivos de música existen
+            if (contenidoInicializado) return;
+            
             cancionesDisponibles = await verificarArchivosMusica();
             
             if (cancionesDisponibles.length === 0) {
@@ -1034,34 +1016,19 @@
                 return;
             }
             
-            // Seleccionar mensaje único aleatorio
             document.getElementById("unicoMensaje").textContent = getRandomElement(mensajesUnicos);
-            
-            // Seleccionar firma aleatoria
             document.getElementById("firma").textContent = getRandomElement(firmas);
             
-            // Seleccionar música aleatoria de las disponibles
             musicaActual = getRandomElement(cancionesDisponibles);
             const audioElement = document.getElementById('backgroundMusic');
-            
-            // Establecer fuente de audio
             audioElement.src = musicaActual.archivo;
             
-            // Configurar galería
             setupGaleria();
             
-            console.log("Contenido inicializado con:", {
-                mensaje: document.getElementById("unicoMensaje").textContent,
-                cancion: musicaActual.nombre,
-                archivo: musicaActual.archivo,
-                totalCancionesDisponibles: cancionesDisponibles.length
-            });
-            
-            // Mostrar info de la canción
             document.getElementById('songInfo').textContent = `🎵 ${musicaActual.nombre}`;
+            contenidoInicializado = true;
         }
 
-        // Intentar reproducir música después de la animación
         async function intentarReproducirMusica() {
             const audioElement = document.getElementById('backgroundMusic');
             const songInfo = document.getElementById('songInfo');
@@ -1075,32 +1042,23 @@
             }
             
             try {
-                // Intentar autoplay
                 await audioElement.play();
                 console.log("Música iniciada automáticamente al cargar:", musicaActual.nombre);
-                
-                // Actualizar info de la canción
                 songInfo.textContent = `🎵 ${musicaActual.nombre}`;
                 songInfo.style.color = '';
-                
             } catch (error) {
                 console.log("Autoplay bloqueado por el navegador:", error);
                 autoplayBlocked = true;
-                
-                // Mostrar controles de audio
                 document.querySelector('.audio-section').style.display = 'block';
-                songInfo.textContent = 
-                    'La música no pudo iniciar automáticamente. Toca el botón para reproducir.';
+                songInfo.textContent = 'La música no pudo iniciar automáticamente. Toca el botón para reproducir.';
                 songInfo.style.color = '#ff6b6b';
             }
         }
 
-        // Configurar galería de imágenes
         function setupGaleria() {
             const galleryContainer = document.getElementById('imagenes');
             galleryContainer.innerHTML = '';
             
-            // Seleccionar 6 imágenes aleatorias para la galería
             const galleryImages = selectUniqueRandom(fotos, 6);
             
             galleryImages.forEach((imgSrc, index) => {
@@ -1113,7 +1071,6 @@
                 img.alt = `Imagen ${index + 1}`;
                 img.loading = "lazy";
                 img.onerror = function() {
-                    // Si la imagen no carga, ocultar el frame
                     this.parentElement.style.display = 'none';
                 };
                 
@@ -1122,7 +1079,6 @@
             });
         }
 
-        // Alternar reproducción de audio
         function toggleAudio() {
             const audioElement = document.getElementById('backgroundMusic');
             const audioButtonText = document.getElementById('audioButtonText');
@@ -1135,7 +1091,6 @@
                     playIcon.textContent = '⏸️';
                     songInfo.textContent = `🎵 ${musicaActual.nombre}`;
                     songInfo.style.color = '';
-                    console.log("Música iniciada manualmente");
                 }).catch(error => {
                     console.error("Error al iniciar música:", error);
                     songInfo.textContent = 'Error al reproducir la música. Intenta de nuevo.';
@@ -1145,178 +1100,113 @@
                 audioElement.pause();
                 audioButtonText.textContent = 'Reanudar música';
                 playIcon.textContent = '▶️';
-                console.log("Música pausada");
             }
         }
 
-        // Función para abrir imagen en fullscreen
         function openFullscreen(imgSrc) {
             const fullscreen = document.getElementById('imageFullscreen');
             const fullscreenImg = document.getElementById('fullscreenImg');
-            
             fullscreenImg.src = imgSrc;
             fullscreen.style.display = 'flex';
-            
-            // Bloquear scroll del body
             document.body.style.overflow = 'hidden';
         }
 
-        // Función para cerrar fullscreen
         function closeFullscreen() {
-            const fullscreen = document.getElementById('imageFullscreen');
-            fullscreen.style.display = 'none';
-            
-            // Restaurar scroll del body
+            document.getElementById('imageFullscreen').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
 
-        // Configurar manejo de errores de audio
         function setupAudioHandlers() {
             const audioElement = document.getElementById('backgroundMusic');
             const songInfo = document.getElementById('songInfo');
             const audioSection = document.querySelector('.audio-section');
             
-            // Manejar error de carga de audio
             audioElement.addEventListener('error', (e) => {
                 console.error("Error cargando audio:", audioElement.error);
                 
-                // Si hay error con esta canción, intentar con otra si hay disponibles
                 if (cancionesDisponibles.length > 1) {
-                    // Remover la canción problemática de la lista
                     const currentIndex = cancionesDisponibles.findIndex(c => c.archivo === musicaActual.archivo);
                     if (currentIndex > -1) {
                         cancionesDisponibles.splice(currentIndex, 1);
                     }
                     
-                    // Intentar con otra canción si quedan
                     if (cancionesDisponibles.length > 0) {
                         musicaActual = getRandomElement(cancionesDisponibles);
                         audioElement.src = musicaActual.archivo;
                         audioElement.load();
-                        
-                        // Actualizar info
                         songInfo.textContent = `Intentando: ${musicaActual.nombre}...`;
                         
-                        // Intentar reproducir de nuevo después de un breve delay
                         setTimeout(() => {
                             audioElement.play().catch(err => {
-                                console.log("Todavía no se puede reproducir:", err);
                                 songInfo.textContent = 'Toca el botón para reproducir.';
                                 songInfo.style.color = '#ff6b6b';
                                 audioSection.style.display = 'block';
                             });
                         }, 1000);
-                        
                         return;
                     }
                 }
                 
-                // Si no hay más canciones
                 songInfo.textContent = 'Error cargando la música. Verifica los archivos en la carpeta "musica".';
                 songInfo.style.color = '#ff6b6b';
-                
-                // Mostrar controles
                 audioSection.style.display = 'block';
                 document.getElementById('audioButton').style.display = 'none';
             });
             
-            // Cuando la música se reproduce exitosamente
             audioElement.addEventListener('play', () => {
                 songInfo.textContent = `🎵 ${musicaActual.nombre}`;
                 songInfo.style.color = '';
-                
-                // Si autoplay fue bloqueado pero ahora se reproduce, actualizar botón
                 if (autoplayBlocked) {
                     document.getElementById('audioButtonText').textContent = 'Pausar música';
                     document.getElementById('playIcon').textContent = '⏸️';
                 }
             });
             
-            // Cuando la música se pausa
             audioElement.addEventListener('pause', () => {
                 if (autoplayBlocked) {
                     document.getElementById('audioButtonText').textContent = 'Reanudar música';
                     document.getElementById('playIcon').textContent = '▶️';
                 }
             });
-            
-            // Cuando la música termina (loop debería reiniciar)
-            audioElement.addEventListener('ended', () => {
-                console.log("Música terminada (loop activado)");
-            });
         }
 
-        // Inicializar cuando la página cargue
+        // Inicialización al cargar la página
         window.addEventListener('load', async () => {
-            // Iniciar cronómetro de tiempo transcurrido (siempre)
             iniciarTiempoTranscurrido();
+            iniciarCountdown();
             
-            // Configurar evento para botón de clave
+            // Preparar el contenido en segundo plano (no se muestra hasta la clave)
+            await initContenido();
+            setupAudioHandlers();
+            
+            // Eventos para el botón de clave
             document.getElementById('passwordButton').addEventListener('click', accederConClave);
             document.getElementById('passwordInput').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') accederConClave();
             });
             
-            // Verificar si ya pasó la fecha de disponibilidad
-            const ahora = new Date();
-            if (ahora >= FECHA_DISPONIBILIDAD) {
-                // Si ya pasó la fecha, mostrar contenido directamente (sin clave)
-                mostrarContenido();
-                await initContenido();
-                setupAudioHandlers();
-            } else {
-                // Si aún no pasa la fecha, mostrar pantalla de carga con countdown y clave
-                iniciarCountdown();
-                // Inicializar el contenido en segundo plano para que esté listo cuando accedan
-                await initContenido();
-                setupAudioHandlers();
-            }
-            
-            // Si el usuario interactúa y el autoplay estaba bloqueado, intentar reproducir
-            document.addEventListener('click', function intentarReproducir() {
-                if (autoplayBlocked && !document.getElementById('backgroundMusic').paused) {
-                    return;
-                }
-                
-                if (autoplayBlocked) {
-                    const audioElement = document.getElementById('backgroundMusic');
-                    audioElement.play().then(() => {
-                        autoplayBlocked = false;
-                        document.querySelector('.audio-section').style.display = 'none';
-                    }).catch(e => {
-                        console.log("Aún no se puede reproducir:", e);
-                    });
-                }
-            }, { once: true });
+            // Intentar autoplay cuando se pueda (solo después de mostrar contenido)
+            // No hacemos nada aquí, se maneja en mostrarContenido
         });
 
         // Cerrar fullscreen con tecla ESC
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeFullscreen();
-            }
+            if (e.key === 'Escape') closeFullscreen();
         });
 
-        // Cerrar fullscreen tocando fuera de la imagen
         document.getElementById('imageFullscreen').addEventListener('click', (e) => {
-            if (e.target.id === 'imageFullscreen') {
-                closeFullscreen();
-            }
+            if (e.target.id === 'imageFullscreen') closeFullscreen();
         });
 
         // Prevenir zoom no deseado en móviles
-        document.addEventListener('touchstart', function(event) {
-            if (event.touches.length > 1) {
-                event.preventDefault();
-            }
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) e.preventDefault();
         }, { passive: false });
 
         let lastTouchEnd = 0;
-        document.addEventListener('touchend', function(event) {
+        document.addEventListener('touchend', (e) => {
             const now = Date.now();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
+            if (now - lastTouchEnd <= 300) e.preventDefault();
             lastTouchEnd = now;
         }, false);
     </script>
